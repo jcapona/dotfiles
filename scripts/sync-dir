@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $ sync-dir <FOLDER> <LOCATION>"
+    exit 1
+fi
+
+source_dir="$(pwd)/${1}"
+dest_dir="${2}"
+
+if [[ ${dest_dir} == *"@"* ]]; then
+    echo "Remote host detected. Running ssh-copy-id..."
+    host_identifier="${dest_dir%%:*}"
+    ssh-copy-id ${host_identifier}
+fi
+
+echo "Sending initial file list..."
+rsync -avz "${source_dir}" "${dest_dir}" &>/dev/null
+
+echo "Waiting for file changes..."
+while inotifywait -r -e modify,create,delete,move "${source_dir}" &>/dev/null; do
+    echo "Syncing file(s)..."
+    rsync -avz "${source_dir}" "${dest_dir}" &>/dev/null
+done
