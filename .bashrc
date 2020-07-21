@@ -113,5 +113,17 @@ export LSCOLORS=ExFxBxDxCxegedabagacad
 parse_git_branch() {
     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ [\1]/'
 }
-export PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\[\e[34;1m\]\$(parse_git_branch)\[\e[0m\] $ "
+BGREEN='[\033[1;32m]'
+DGREEN='[\033[0;32m]'
+BRED='[\033[1;31m]'
+RED='[\033[0;31m]'
+BBLUE='[\033[1;36m]'
+BLUE='[\033[0;34m]'
+NORMAL='[\033[00m]'
+BPURPLE='[\033[1;35m]'
+DPURPLE='[\033[1;34m]'
+WHITE='[\033[0;37m]'
+BWHITE='[\033[1;37m]'
+
+PS1='\[\e]0;\w\a\]\n\[\e[38;5;43m\]\u@\h \[\e[33m\]\w\[\e[0m\]$(parse_git_branch)\n\$ '
 
