@@ -40,7 +40,6 @@ echo "Cloning vundle plugin manager"
 git clone https://github.com/gmarik/vundle.git "${VIM_CONFIG}/bundle/vundle"
 echo "Open vim and run: ':BundleInstall'"
 
-
 source "${PWD}/.bashrc"
 exit 0
 

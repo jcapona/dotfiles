@@ -25,28 +25,25 @@ Bundle 'tomtom/tlib_vim'
 "-----------------
 " Fast navigation
 "-----------------
-Bundle 'edsono/vim-matchit'
+"Bundle 'edsono/vim-matchit'
 Bundle 'Lokaltog/vim-easymotion'
 
 "--------------
 " Fast editing
 "--------------
-Bundle 'tpope/vim-surround'
-Bundle 'scrooloose/nerdcommenter'
+"Bundle 'tpope/vim-surround'
+"Bundle 'scrooloose/nerdcommenter'
 Bundle 'sjl/gundo.vim'
-Bundle 'godlygeek/tabular'
+"Bundle 'godlygeek/tabular'
 Bundle 'nathanaelkane/vim-indent-guides'
 
 "--------------
 " IDE features
 "--------------
 Bundle 'scrooloose/nerdtree'
-Bundle 'humiaozuzu/TabBar'
-Bundle 'majutsushi/tagbar'
-Bundle 'mileszs/ack.vim'
-Bundle 'kien/ctrlp.vim'
-Bundle 'tpope/vim-fugitive'
-Bundle 'Lokaltog/vim-powerline'
+"Bundle 'mileszs/ack.vim'
+"Bundle 'tpope/vim-fugitive'
+"Bundle 'Lokaltog/vim-powerline'
 Bundle 'scrooloose/syntastic'
 Bundle 'bronson/vim-trailing-whitespace'
 
@@ -54,15 +51,15 @@ Bundle 'bronson/vim-trailing-whitespace'
 " Other Utils
 "-------------
 " Bundle 'humiaozuzu/fcitx-status'
-Bundle 'nvie/vim-togglemouse'
+" Bundle 'nvie/vim-togglemouse'
 
 "----------------------------------------
 " Syntax/Indent for language enhancement
 "----------------------------------------
 "------- web backend ---------
-Bundle '2072/PHP-Indenting-for-VIm'
+"Bundle '2072/PHP-Indenting-for-VIm'
 "Bundle 'tpope/vim-rails'
-Bundle 'lepture/vim-jinja'
+"Bundle 'lepture/vim-jinja'
 "Bundle 'digitaltoad/vim-jade'
 
 "------- web frontend ----------
@@ -95,11 +92,7 @@ Bundle 'kien/rainbow_parentheses.vim'
 " Color Schemes
 "--------------
 Bundle 'rickharris/vim-blackboard'
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'rickharris/vim-monokai'
 Bundle 'tpope/vim-vividchalk'
 Bundle 'Lokaltog/vim-distinguished'
-Bundle 'chriskempson/vim-tomorrow-theme'
-Bundle 'fisadev/fisa-vim-colorscheme'
 
 filetype plugin indent on     " required!
