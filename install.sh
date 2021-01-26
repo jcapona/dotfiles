@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 USER_HOME="${HOME}"
 VIM_CONFIG="${USER_HOME}/.vim"
@@ -23,22 +23,23 @@ echo "Backing up vim files"
 mkdir "${BACKUP_FOLDER}/vim"
 if [ -d "${VIM_CONFIG}" ]; then
     mv "${VIM_CONFIG}" "${BACKUP_FOLDER}/vim"
-elif [ -f "${USER_HOME}/.vimrc" ]; then
+fi
+if [ -f "${USER_HOME}/.vimrc" ]; then
     mv "${USER_HOME}/.vimrc" "${BACKUP_FOLDER}/vim"
 elif [ -L "${USER_HOME}/.vimrc" ]; then
     rm "${USER_HOME}/.vimrc"
 fi
 
-# vim config mostly taken from https://github.com/humiaozuzu/dot-vimrc
 echo "Copying new vim config to user home folder"
 mkdir -p "${VIM_CONFIG}"
-cp "${PWD}/vimrc" "${VIM_CONFIG}"
-cp "${PWD}/bundles.vim" "${VIM_CONFIG}"
+cp -r "${PWD}/vim/vim/"* "${VIM_CONFIG}"
+cp -r "${PWD}/vim/vimrc" "${VIM_CONFIG}"
 ln -s "${VIM_CONFIG}/vimrc" "${USER_HOME}/.vimrc"
 
-echo "Cloning vundle plugin manager"
-git clone https://github.com/gmarik/vundle.git "${VIM_CONFIG}/bundle/vundle"
-echo "Open vim and run: ':BundleInstall'"
+echo "Installing vim plugin manager"
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
 
 source "${PWD}/.bashrc"
 exit 0
