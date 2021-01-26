@@ -1,6 +1,6 @@
-#!/bin/bash -ex
+#!/bin/bash
 
-USER_HOME="/home/${USER}"
+USER_HOME="${HOME}"
 VIM_CONFIG="${USER_HOME}/.vim"
 BACKUP_FOLDER="${PWD}/backups"
 

@@ -6,7 +6,8 @@ if [ "$#" -ne 1 ]; then
 fi
 
 ip=$1
-ssh-keygen -f "/home/${USER}/.ssh/known_hosts" -R "${ip}"
+
+ssh-keygen -f "${HOME}/.ssh/known_hosts" -R "${ip}"
 
 host_identifier="pi@${ip}"
 ssh-copy-id ${host_identifier}
