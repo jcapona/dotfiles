@@ -1,0 +1,8 @@
+#!/bin/bash
+device=${1}
+
+if [[ "$*" == *--new* ]]; then
+    new-pi "${device}"
+fi
+ssh pi@"${device}"
+
