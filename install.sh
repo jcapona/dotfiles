@@ -1,11 +1,30 @@
-#!/bin/bash -ex
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+sudo apt update
+sudo apt install -y \
+    build-essential \
+    git \
+    silversearcher-ag \
+    vim
+
+echo "Creating temporal folder..."
+TMP_FOLDER=$(mktemp)
+cd "${TMP_FOLDER}"
+
+echo "Cloning dotfiles repo..."
+git clone https://github.com/jcapona/dotfiles.git
+cd "dotfiles"
+
+echo "Installing..."
 
 USER_HOME="${HOME}"
 VIM_CONFIG="${USER_HOME}/.vim"
 BACKUP_FOLDER="${PWD}/backups"
 
 if [ -d "${BACKUP_FOLDER}" ]; then
-    echo "There's backed up files at ${BACKUP_FOLDER}, exiting..."
+    echo "There are backed up files at ${BACKUP_FOLDER}, please remove them and run this script again. Exiting..."
     exit 1
 fi
 
@@ -42,16 +61,6 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 
 
 source "${PWD}/.bashrc"
+echo "Previous configuration was backed up in ${BACKUP_FOLDER}..."
 exit 0
 
-#sudo cp -fr scripts/* /usr/bin/
-#
-#sudo apt update
-#sudo apt upgrade -y
-#sudo apt install -y \
-#    build-essential \
-#    git \
-#    silversearcher-ag \
-#    strace \
-#    vim \
-#    vlc
