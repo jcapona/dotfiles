@@ -10,7 +10,7 @@ sudo apt install -y \
     vim
 
 echo "Creating temporal folder..."
-TMP_FOLDER=$(mktemp)
+TMP_FOLDER=$(mktemp -d)
 cd "${TMP_FOLDER}"
 
 echo "Cloning dotfiles repo..."
