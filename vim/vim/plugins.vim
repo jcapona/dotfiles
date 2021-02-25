@@ -13,9 +13,10 @@ Plug 'leafgarland/typescript-vim'
 Plug 'yuezk/vim-js'
 
 " Nerdtree improvements
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'ryanoasis/vim-devicons'
-Plug 'vwxyutarooo/nerdtree-devicons-syntax'
+" (may be too much for a RPi)
+" Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+" Plug 'ryanoasis/vim-devicons'
+" Plug 'vwxyutarooo/nerdtree-devicons-syntax'
 
 
 
