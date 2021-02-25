@@ -25,8 +25,10 @@ alias gst="git status"
 
 # utils
 alias bbat='bat --style=plain'
+alias changelog-version="head -n 1 debian/changelog | cut -d' ' -f2  | cut -d'-' -f1 | cut -d'(' -f2"
+alias clean-python-cache='find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf'
 alias fix-pycharm="ibus-daemon -rd"
 alias fix-scroll-history="tput rmcup "
 alias pbcopy='xclip -selection clipboard'
 alias pbpaste='xclip -selection clipboard -o'
-alias changelog-version="head -n 1 debian/changelog | cut -d' ' -f2  | cut -d'-' -f1 | cut -d'(' -f2"
+

@@ -1,3 +1,3 @@
 # Personal environment setup
 
-Install with `curl -L https://raw.githubusercontent.com/jcapona/dotfiles/master/install.sh | bash`
+Install with `curl -l https://raw.githubusercontent.com/jcapona/dotfiles/master/install.sh | bash`
