@@ -1,0 +1,42 @@
+#!/bin/bash
+
+if [ "$#" -gt 3 ] || [ "$#" -eq 0 ]; then
+    echo "Usage: $ sync-dir <SOURCE FOLDER> <IP> <DESTINATION FOLDER>"
+    exit 1
+fi
+
+if [[ "${1}" = /* ]]; then
+	source_dir="${1}"
+else
+	source_dir="$(pwd)/${1}"
+fi
+source_dir=$(echo "${source_dir}" | sed 's:/*$::')
+
+dest_ip="pi-top.local"
+if [ ! -z $2 ]; then
+	dest_ip="${2}"
+fi
+
+dest_folder="/home/pi/"
+if [ ! -z ${3} ]; then
+	dest_folder=${3}
+fi
+dest_dir="pi@${dest_ip}:${dest_folder}"
+
+echo "Copying $source_dir to $dest_dir ..."
+echo ""
+
+if [[ ${dest_dir} == *"@"* ]]; then
+    echo "Remote host detected. Running ssh-copy-id..."
+    host_identifier="${dest_dir%%:*}"
+    ssh-copy-id ${host_identifier}
+fi
+
+echo "Sending initial file list..."
+rsync -avz "${source_dir}" "${dest_dir}" &>/dev/null
+
+echo "Waiting for file changes..."
+while inotifywait -r -e modify,create,delete,move "${source_dir}" &>/dev/null; do
+    echo "Syncing file(s)..."
+    rsync -avz "${source_dir}" "${dest_dir}" &>/dev/null
+done
