@@ -2,22 +2,32 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-sudo apt update
-sudo apt install -y \
-    build-essential \
-    git \
-    silversearcher-ag \
-    vim
+echo "Attempting to install helpful packages..."
+PLATFORM=$(uname)
+if [[ "${PLATFORM}" = "Darwin" ]]; then
+    if ! [ -x "$(command -v brew)" ]; then
+        echo "Installing homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+    brew install ag git vim neovim tmux
+else if [ -x "$(command -v apt)" ]; then
+    sudo apt update
+    sudo apt install -y \
+        build-essential \
+        git \
+        silversearcher-ag \
+        vim \
+        neovim \
+        tmux
+fi
 
-echo "Creating temporal folder..."
+echo "Creating temporal folder to clone repo..."
 TMP_FOLDER=$(mktemp -d)
 cd "${TMP_FOLDER}"
 
 echo "Cloning dotfiles repo..."
 git clone https://github.com/jcapona/dotfiles.git
 cd "dotfiles"
-
-echo "Installing..."
 
 USER_HOME="${HOME}"
 VIM_CONFIG="${USER_HOME}/.vim"
