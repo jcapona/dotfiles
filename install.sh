@@ -10,7 +10,7 @@ if [[ "${PLATFORM}" = "Darwin" ]]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
     brew install ag git vim neovim tmux
-else if [ -x "$(command -v apt)" ]; then
+elif [ -x "$(command -v apt)" ]; then
     sudo apt update
     sudo apt install -y \
         build-essential \
