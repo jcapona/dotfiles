@@ -104,3 +104,4 @@ let $FZF_DEFAULT_OPTS='--layout=reverse'
     "return search_result
 "endfunction
 "
+let g:coc_disable_startup_warning = 1
