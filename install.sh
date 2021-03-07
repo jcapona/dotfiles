@@ -13,12 +13,13 @@ if [[ "${PLATFORM}" = "Darwin" ]]; then
 elif [ -x "$(command -v apt)" ]; then
     sudo apt update
     sudo apt install -y \
-        build-essential \
         git \
         silversearcher-ag \
         vim \
         neovim \
-        tmux
+        tmux \
+        curl \
+        wget
 fi
 
 echo "Creating temporal folder to clone repo..."
