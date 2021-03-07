@@ -4,8 +4,8 @@ IFS=$'\n\t'
 
 echo "Attempting to install useful packages..."
 PACKAGES_BASE="git vim neovim tmux curl wget less python3"
-PACKAGES_LINUX="silversearcher-ag python3-dev"
 PACKAGES_OSX="ag"
+PACKAGES_LINUX="python3-dev"
 PACKAGES_TO_INSTALL=""
 PACKAGE_MANAGER_COMMAND=""
 PLATFORM=$(uname)
@@ -18,9 +18,11 @@ if [[ "${PLATFORM}" = "Darwin" ]]; then
     PACKAGES_TO_INSTALL="${PACKAGES_BASE} ${PACKAGES_OSX}"
 elif [ -x "$(command -v apt)" ]; then
     PACKAGE_MANAGER_COMMAND="apt update && apt install -y"
+    PACKAGES_LINUX="${PACKAGES_LINUX} silversearcher-ag"
     PACKAGES_TO_INSTALL="${PACKAGES_BASE} ${PACKAGES_LINUX}"
 elif [ -x "$(command -v apk)" ]; then
-    PACKAGE_MANAGER_COMMAND="apk add -U --no-cache"
+    PACKAGE_MANAGER_COMMAND="apk update && apk add -U --no-cache"
+    PACKAGES_LINUX="${PACKAGES_LINUX} the_silver_searcher"
     PACKAGES_TO_INSTALL="${PACKAGES_BASE} ${PACKAGES_LINUX}"
 else
     echo "Couldn't install packages: couldn't find a supported package manager"
@@ -50,7 +52,7 @@ mkdir -p "${BACKUP_FOLDER}"
 
 echo "Backing up bashrc files..."
 mkdir "${BACKUP_FOLDER}/bashrc"
-cp "${USER_HOME}"/.bash* "${BACKUP_FOLDER}/bashrc"
+cp "${USER_HOME}"/.bash* "${BACKUP_FOLDER}/bashrc" || true
 
 echo "Copying new bash config files to user home folder"
 cp "${PWD}"/.bash* "${USER_HOME}"
