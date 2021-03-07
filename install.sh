@@ -2,25 +2,31 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-echo "Attempting to install helpful packages..."
+echo "Attempting to install useful packages..."
+PACKAGES_BASE="git vim neovim tmux curl wget less python3"
+PACKAGES_LINUX="silversearcher-ag python3-dev"
+PACKAGES_OSX="ag"
+PACKAGES_TO_INSTALL=""
+PACKAGE_MANAGER_COMMAND=""
 PLATFORM=$(uname)
 if [[ "${PLATFORM}" = "Darwin" ]]; then
     if ! [ -x "$(command -v brew)" ]; then
         echo "Installing homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
-    brew install ag git vim neovim tmux
+    PACKAGE_MANAGER_COMMAND="brew install"
+    PACKAGES_TO_INSTALL="${PACKAGES_BASE} ${PACKAGES_OSX}"
 elif [ -x "$(command -v apt)" ]; then
-    sudo apt update
-    sudo apt install -y \
-        git \
-        silversearcher-ag \
-        vim \
-        neovim \
-        tmux \
-        curl \
-        wget
+    PACKAGE_MANAGER_COMMAND="apt update && apt install -y"
+    PACKAGES_TO_INSTALL="${PACKAGES_BASE} ${PACKAGES_LINUX}"
+elif [ -x "$(command -v apk)" ]; then
+    PACKAGE_MANAGER_COMMAND="apk add -U --no-cache"
+    PACKAGES_TO_INSTALL="${PACKAGES_BASE} ${PACKAGES_LINUX}"
+else
+    echo "Couldn't install packages: couldn't find a supported package manager"
 fi
+
+eval "${PACKAGE_MANAGER_COMMAND} ${PACKAGES_TO_INSTALL}"
 
 echo "Creating temporal folder to clone repo..."
 TMP_FOLDER=$(mktemp -d)
@@ -73,7 +79,7 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 mkdir -p ~/.config/nvim
 ln -s ~/.vimrc ~/.config/nvim/init.vim
-echo "Install the plugins by opening vim and running :PlugInstall"
+nvim --headless +PlugInstall +qall
 
 
 source "${PWD}/.bashrc"
