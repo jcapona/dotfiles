@@ -70,8 +70,7 @@ fi
 
 echo "Copying new vim config to user home folder"
 mkdir -p "${VIM_CONFIG}"
-cp -r "${PWD}/vim/vim/"* "${VIM_CONFIG}"
-cp -r "${PWD}/vim/vimrc" "${VIM_CONFIG}"
+cp -r "${PWD}/vim/"* "${VIM_CONFIG}"
 ln -s "${VIM_CONFIG}/vimrc" "${USER_HOME}/.vimrc"
 
 echo "Installing vim plugin manager"
