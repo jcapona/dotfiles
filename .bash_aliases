@@ -22,6 +22,7 @@ alias gcr="git clone --recursive"
 alias gd="git diff"
 alias gg="git grep"
 alias gst="git status"
+alias uch="git fetch && git checkout ci-update-changelog-next-release && vi debian/changelog && git add -u && git commit -m 'Update changelog' && git push origin ci-update-changelog-next-release && git checkout master && git branch -D ci-update-changelog-next-release"
 
 # utils
 alias bbat='bat --style=plain'
