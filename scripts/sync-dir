@@ -15,7 +15,7 @@ if [[ ${dest_dir} == *"@"* ]]; then
 fi
 
 echo "Sending initial file list..."
-rsync -avz --exclude "env" --exclude "venv" "${source_dir}" "${dest_dir}" &>/dev/null
+rsync -avz --exclude "node_modules" --exclude "env" --exclude "venv" "${source_dir}" "${dest_dir}" &>/dev/null
 
 echo "Waiting for file changes..."
 while inotifywait -r -e modify,create,delete,move "${source_dir}" &>/dev/null; do
