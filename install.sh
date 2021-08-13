@@ -17,11 +17,11 @@ if [[ "${PLATFORM}" = "Darwin" ]]; then
     PACKAGE_MANAGER_COMMAND="brew install"
     PACKAGES_TO_INSTALL="${PACKAGES_BASE} ${PACKAGES_OSX}"
 elif [ -x "$(command -v apt)" ]; then
-    PACKAGE_MANAGER_COMMAND="apt update && apt install -y"
+    PACKAGE_MANAGER_COMMAND="sudo apt update && sudo apt install -y"
     PACKAGES_LINUX="${PACKAGES_LINUX} silversearcher-ag"
     PACKAGES_TO_INSTALL="${PACKAGES_BASE} ${PACKAGES_LINUX}"
 elif [ -x "$(command -v apk)" ]; then
-    PACKAGE_MANAGER_COMMAND="apk update && apk add -U --no-cache"
+    PACKAGE_MANAGER_COMMAND="sudo apk update && sudo apk add -U --no-cache"
     PACKAGES_LINUX="${PACKAGES_LINUX} the_silver_searcher"
     PACKAGES_TO_INSTALL="${PACKAGES_BASE} ${PACKAGES_LINUX}"
 else
