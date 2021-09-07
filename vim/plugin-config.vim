@@ -105,3 +105,5 @@ let $FZF_DEFAULT_OPTS='--layout=reverse'
 "endfunction
 "
 let g:coc_disable_startup_warning = 1
+let g:coc_node_path = trim(system('which node'))
+
