@@ -6,8 +6,9 @@ echo "Attempting to install useful packages..."
 PACKAGES_BASE="git vim neovim tmux curl wget less python3"
 PACKAGES_OSX="ag"
 PACKAGES_LINUX="python3-dev"
-PACKAGES_TO_INSTALL=""
+PACKAGES_TO_INSTALL="${PACKAGES_BASE}"
 PACKAGE_MANAGER_COMMAND=""
+
 PLATFORM=$(uname)
 if [[ "${PLATFORM}" = "Darwin" ]]; then
     if ! [ -x "$(command -v brew)" ]; then
@@ -15,15 +16,15 @@ if [[ "${PLATFORM}" = "Darwin" ]]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
     PACKAGE_MANAGER_COMMAND="brew install"
-    PACKAGES_TO_INSTALL="${PACKAGES_BASE} ${PACKAGES_OSX}"
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} ${PACKAGES_OSX}"
 elif [ -x "$(command -v apt)" ]; then
     PACKAGE_MANAGER_COMMAND="sudo apt update && sudo apt install -y"
     PACKAGES_LINUX="${PACKAGES_LINUX} silversearcher-ag"
-    PACKAGES_TO_INSTALL="${PACKAGES_BASE} ${PACKAGES_LINUX}"
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} ${PACKAGES_LINUX}"
 elif [ -x "$(command -v apk)" ]; then
     PACKAGE_MANAGER_COMMAND="sudo apk update && sudo apk add -U --no-cache"
     PACKAGES_LINUX="${PACKAGES_LINUX} the_silver_searcher"
-    PACKAGES_TO_INSTALL="${PACKAGES_BASE} ${PACKAGES_LINUX}"
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} ${PACKAGES_LINUX}"
 else
     echo "Couldn't install packages: couldn't find a supported package manager"
 fi
@@ -85,5 +86,32 @@ nvim --headless +PlugInstall +qall
 
 source "${PWD}/.bashrc"
 echo "Previous configuration was backed up in ${BACKUP_FOLDER}..."
+
+echo "Installing other dev tools"
+PYTHON_TOOLS="virtualenv pre-commit"
+pip3 install "${PYTHON_TOOLS}"
+
+echo "Installing docker"
+if [ -x "$(command -v apt)" ]; then
+    sudo apt-get remove docker docker-engine docker.io containerd runc
+    sudo apt-get install apt-transport-https ca-certificates software-properties-common -y
+    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+    if [[ "$(uname -m)" == "amd64" ]]; then
+        echo \
+          "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
+          $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    else
+        echo \
+      "deb [arch=armhf signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
+      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    fi
+    sudo apt-get update
+    sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+    sudo usermod -aG docker "${USER}"
+    echo "Reboot to use docker without 'sudo'"
+fi
+
+echo "Bye!"
 exit 0
 
