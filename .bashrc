@@ -127,4 +127,8 @@ BWHITE='[\033[1;37m]'
 
 PS1='\[\e]0;\w\a\]\n\[\e[38;5;43m\]\u@\h \[\e[33m\]\w\[\e[0m\]$(parse_git_branch)\n\$ '
 
-
+# Real-time sync
+# rts . user@host:~
+rts() {
+    fswatch -0 -o $1 | xargs -0 -I {} rsync -avz --delete $1 $2
+}
