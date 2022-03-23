@@ -29,7 +29,12 @@ else
     echo "Couldn't install packages: couldn't find a supported package manager"
 fi
 
-eval "${PACKAGE_MANAGER_COMMAND} ${PACKAGES_TO_INSTALL}"
+if [ -n "${PACKAGE_MANAGER_COMMAND}" ]; then
+    eval "${PACKAGE_MANAGER_COMMAND} ${PACKAGES_TO_INSTALL}"
+fi
+
+echo "Installing pip"
+curl https://bootstrap.pypa.io/get-pip.py | python3
 
 echo "Creating temporal folder to clone repo..."
 TMP_FOLDER=$(mktemp -d)
