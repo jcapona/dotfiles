@@ -93,8 +93,7 @@ source "${PWD}/.bashrc"
 echo "Previous configuration was backed up in ${BACKUP_FOLDER}..."
 
 echo "Installing other dev tools"
-PYTHON_TOOLS="pipenv pre-commit"
-pip3 install $PYTHON_TOOLS
+pip3 install pipenv pre-commit
 
 if [ -x "$(command -v apt)" ]; then
     echo "Installing docker"
