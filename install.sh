@@ -88,24 +88,19 @@ source "${PWD}/.bashrc"
 echo "Previous configuration was backed up in ${BACKUP_FOLDER}..."
 
 echo "Installing other dev tools"
-PYTHON_TOOLS="virtualenv pre-commit"
-pip3 install "${PYTHON_TOOLS}"
+PYTHON_TOOLS="pipenv pre-commit"
+pip3 install $PYTHON_TOOLS
 
-echo "Installing docker"
 if [ -x "$(command -v apt)" ]; then
-    sudo apt-get remove docker docker-engine docker.io containerd runc
-    sudo apt-get install apt-transport-https ca-certificates software-properties-common -y
+    echo "Installing docker"
+    sudo apt-get remove docker docker-engine docker.io containerd runc || true
+    DEBIAN_FRONTEND=noninteractive sudo apt-get install apt-transport-https ca-certificates software-properties-common -y
     curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
-    if [[ "$(uname -m)" == "amd64" ]]; then
-        echo \
-          "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
-          $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    else
-        echo \
-      "deb [arch=armhf signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
+    arch="$(dpkg --print-architecture)"
+    echo \
+      "deb [arch=$arch signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
       $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    fi
     sudo apt-get update
     sudo apt-get install docker-ce docker-ce-cli containerd.io -y
     sudo usermod -aG docker "${USER}"
