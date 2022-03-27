@@ -2,7 +2,6 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-echo "Attempting to install useful packages..."
 PACKAGES_BASE="git vim neovim tmux curl wget less python3"
 PACKAGES_OSX="ag"
 PACKAGES_LINUX="python3-dev"
@@ -30,41 +29,36 @@ else
 fi
 
 if [ -n "${PACKAGE_MANAGER_COMMAND}" ]; then
+    echo "Installing useful packages..."
     eval "${PACKAGE_MANAGER_COMMAND} ${PACKAGES_TO_INSTALL}"
 fi
 
 echo "Installing pip"
 curl https://bootstrap.pypa.io/get-pip.py | python3
 
-echo "Creating temporal folder to clone repo..."
-TMP_FOLDER=$(mktemp -d)
-cd "${TMP_FOLDER}"
-
 echo "Cloning dotfiles repo..."
-git clone https://github.com/jcapona/dotfiles.git
-cd "dotfiles"
+TMP_FOLDER=$(mktemp -d)
+git clone https://github.com/jcapona/dotfiles.git  "${TMP_FOLDER}"
+cd  "${TMP_FOLDER}"
 
 USER_HOME="${HOME}"
 VIM_CONFIG="${USER_HOME}/.vim"
 BACKUP_FOLDER="${PWD}/backups"
 
-if [ -d "${BACKUP_FOLDER}" ]; then
-    echo "There are backed up files at ${BACKUP_FOLDER}, please remove them and run this script again. Exiting..."
-    exit 1
-fi
-
-echo "Creating backups folder..."
 mkdir -p "${BACKUP_FOLDER}"
 
+echo "Backing up files into ${BACKUP_FOLDER}"
+
 echo "Backing up bashrc files..."
-mkdir "${BACKUP_FOLDER}/bashrc"
+mkdir -p "${BACKUP_FOLDER}/bashrc"
 cp "${USER_HOME}"/.bash* "${BACKUP_FOLDER}/bashrc" || true
 
 echo "Copying new bash config files to user home folder"
-cp "${PWD}"/.bash* "${USER_HOME}"
+cp "${PWD}"/bash/bashrc "${USER_HOME}"/.bashrc
+cp "${PWD}"/bash/bash_aliases "${USER_HOME}"/.bash_aliases
 
 echo "Backing up vim files"
-mkdir "${BACKUP_FOLDER}/vim"
+mkdir -p "${BACKUP_FOLDER}/vim"
 if [ -d "${VIM_CONFIG}" ]; then
     mv "${VIM_CONFIG}" "${BACKUP_FOLDER}/vim"
 fi
@@ -88,9 +82,7 @@ mkdir -p ~/.config/nvim
 ln -s ~/.vimrc ~/.config/nvim/init.vim
 nvim --headless +PlugInstall +qall
 
-
-source "${PWD}/.bashrc"
-echo "Previous configuration was backed up in ${BACKUP_FOLDER}..."
+source "${USER_HOME}"/.bashrc
 
 echo "Installing other dev tools"
 pip3 install pipenv pre-commit
