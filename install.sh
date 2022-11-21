@@ -55,7 +55,7 @@ cp "${USER_HOME}"/.bash* "${BACKUP_FOLDER}/bashrc" || true
 
 echo "Copying new bash config files to user home folder"
 cp "${PWD}"/bash/bashrc "${USER_HOME}"/.bashrc
-cp "${PWD}"/bash/bash_aliases "${USER_HOME}"/.bash_aliases
+cp "${PWD}"/bash/shell_aliases "${USER_HOME}"/.shell_aliases
 
 echo "Backing up vim files"
 mkdir -p "${BACKUP_FOLDER}/vim"
