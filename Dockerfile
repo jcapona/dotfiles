@@ -1,7 +1,8 @@
-FROM alpine:latest
+FROM ubuntu:latest
 
-RUN apk update
-RUN apk add --no-cache --upgrade bash sudo
+RUN apt update
+RUN apt upgrade -y
+RUN apt install -y bash sudo
 
 COPY * /tmp
 
