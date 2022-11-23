@@ -87,8 +87,8 @@ copy_custom_scripts_and_aliases() {
   cd "${TMP_FOLDER}"
 
   echo "===== Custom scripts: Copying shell aliases to user home folder"
-  cp "${PWD}"/shell_aliases "${USER_HOME}"/.shell_aliases
-  echo "[ -f ~/.shell_aliases ] && . ~/.shell_aliases" >> "~/.zshrc"
+  cp "${PWD}"/shell_aliases ~/.shell_aliases
+  echo "[ -f ~/.shell_aliases ] && . ~/.shell_aliases" >> ~/.zshrc
   echo "===== Custom scripts: Copying useful scripts to /usr/local/bin"
   cp "${PWD}"/scripts/* /usr/local/bin/
 
