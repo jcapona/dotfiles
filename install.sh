@@ -2,107 +2,119 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-PACKAGES_BASE="git vim neovim tmux curl wget less python3"
-PACKAGES_OSX="ag"
-PACKAGES_LINUX="python3-dev"
-PACKAGES_TO_INSTALL="${PACKAGES_BASE}"
-PACKAGE_MANAGER_COMMAND=""
 
-PLATFORM=$(uname)
-if [[ "${PLATFORM}" = "Darwin" ]]; then
-    if ! [ -x "$(command -v brew)" ]; then
-        echo "Installing homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    fi
-    PACKAGE_MANAGER_COMMAND="brew install"
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} ${PACKAGES_OSX}"
-elif [ -x "$(command -v apt)" ]; then
-    PACKAGE_MANAGER_COMMAND="sudo apt update && sudo apt install -y"
-    PACKAGES_LINUX="${PACKAGES_LINUX} silversearcher-ag"
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} ${PACKAGES_LINUX}"
-elif [ -x "$(command -v apk)" ]; then
-    PACKAGE_MANAGER_COMMAND="sudo apk update && sudo apk add -U --no-cache"
-    PACKAGES_LINUX="${PACKAGES_LINUX} the_silver_searcher"
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} ${PACKAGES_LINUX}"
-else
-    echo "Couldn't install packages: couldn't find a supported package manager"
-fi
+install_packages() {
+  PACKAGE_MANAGER_COMMAND=""
 
-if [ -n "${PACKAGE_MANAGER_COMMAND}" ]; then
-    echo "Installing useful packages..."
-    eval "${PACKAGE_MANAGER_COMMAND} ${PACKAGES_TO_INSTALL}"
-fi
+  PLATFORM=$(uname)
+  if [[ "${PLATFORM}" = "Darwin" ]]; then
+      if ! [ -x "$(command -v brew)" ]; then
+          echo "Installing homebrew..."
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      fi
+      PACKAGE_MANAGER_COMMAND="brew install"
+  elif [ -x "$(command -v apt)" ]; then
+      PACKAGE_MANAGER_COMMAND="sudo apt update && DEBIAN_FRONTEND=noninteractive sudo apt install -y"
+  elif [ -x "$(command -v apk)" ]; then
+      PACKAGE_MANAGER_COMMAND="sudo apk update && sudo apk add -U --no-cache"
+  else
+      echo "Cant install packages: couldn't find a supported package manager"
+      exit 1
+  fi
 
-echo "Installing pip"
-curl https://bootstrap.pypa.io/get-pip.py | python3
+  echo "Installing packages: $@"
+  eval "${PACKAGE_MANAGER_COMMAND}" "$@"
+}
 
-echo "Cloning dotfiles repo..."
-TMP_FOLDER=$(mktemp -d)
-git clone https://github.com/jcapona/dotfiles.git  "${TMP_FOLDER}"
-cd  "${TMP_FOLDER}"
+build_neovim() {
+  echo "===== NEOVIM: Cleaning any existing configuration"
+  rm -rf ~/.config/nvim
+  rm -rf ~/.local/share/nvim
+  rm -rf ~/.cache/nvim
 
-USER_HOME="${HOME}"
-VIM_CONFIG="${USER_HOME}/.vim"
-BACKUP_FOLDER="${PWD}/backups"
+  echo "===== NEOVIM: Installing build dependencies"
+  install_packages ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen git
 
-mkdir -p "${BACKUP_FOLDER}"
+  echo "===== NEOVIM: Cloning GitHub repository"
+  git clone https://github.com/neovim/neovim.git ~/neovim
+  cd ~/neovim
 
-echo "Backing up files into ${BACKUP_FOLDER}"
+  echo "===== NEOVIM: Building neovim 0.8"
+  git checkout release-0.8
+  make CMAKE_BUILD_TYPE=Release -j
+  sudo make install
+}
 
-echo "Backing up bashrc files..."
-mkdir -p "${BACKUP_FOLDER}/bashrc"
-cp "${USER_HOME}"/.bash* "${BACKUP_FOLDER}/bashrc" || true
+install_lunar_vim_ide() {
+  echo "===== LunarVim: installing dependencies"
+  install_packages xsel wl-clipboard ripgrep python3-pip
+  pip3 install pynvim
 
-echo "Copying new bash config files to user home folder"
-cp "${PWD}"/bash/bashrc "${USER_HOME}"/.bashrc
-cp "${PWD}"/bash/shell_aliases "${USER_HOME}"/.shell_aliases
+  echo "===== LunarVim: Cloning GitHub repository"
+  git clone https://github.com/LunarVim/nvim-basic-ide.git ~/.config/nvim
+}
 
-echo "Backing up vim files"
-mkdir -p "${BACKUP_FOLDER}/vim"
-if [ -d "${VIM_CONFIG}" ]; then
-    mv "${VIM_CONFIG}" "${BACKUP_FOLDER}/vim"
-fi
-if [ -f "${USER_HOME}/.vimrc" ]; then
-    mv "${USER_HOME}/.vimrc" "${BACKUP_FOLDER}/vim"
-elif [ -L "${USER_HOME}/.vimrc" ]; then
-    rm "${USER_HOME}/.vimrc"
-fi
 
-echo "Copying new vim config to user home folder"
-mkdir -p "${VIM_CONFIG}"
-cp -r "${PWD}/vim/"* "${VIM_CONFIG}"
-ln -s "${VIM_CONFIG}/vimrc" "${USER_HOME}/.vimrc"
+configure_nvim() {
+  echo "===== NEOVIM: installing plugins"
+  nvim --headless -c 'autocmd User PackerSync' -c 'qall' || true
 
-echo "Installing vim plugin manager"
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-mkdir -p ~/.config/nvim
-ln -s ~/.vimrc ~/.config/nvim/init.vim
-nvim --headless +PlugInstall +qall
+  echo "===== fonts: Installing fonts for nvim"
+  TMP_FOLDER=$(mktemp -d)
+  git clone https://github.com/ronniedroid/getnf.git "${TMP_FOLDER}"
+  cd "${TMP_FOLDER}"
+  ./install.sh
+  cd -
+  rm -r "${TMP_FOLDER}"
+}
 
-source "${USER_HOME}"/.bashrc
+install_zsh_oh_my_zsh() {
+  echo "===== zsh & oh-my-zsh: Installing"
+  install_packages wget
 
-echo "Installing other dev tools"
-pip3 install pipenv pre-commit
+  sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.1.3/zsh-in-docker.sh)" -- \
+      -p git \
+      -p ssh-agent \
+      -p 'history-substring-search' \
+      -p https://github.com/zsh-users/zsh-autosuggestions \
+      -p https://github.com/agkozak/zsh-z
+}
 
-if [ -x "$(command -v apt)" ]; then
-    echo "Installing docker"
-    sudo apt-get remove docker docker-engine docker.io containerd runc || true
-    DEBIAN_FRONTEND=noninteractive sudo apt-get install apt-transport-https ca-certificates software-properties-common -y
-    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+copy_custom_scripts_and_aliases() {
+  echo "===== Custom scripts: Cloning 'dotfiles' GitHub repository"
+  TMP_FOLDER=$(mktemp -d)
+  git clone https://github.com/jcapona/dotfiles.git  "${TMP_FOLDER}"
+  cd "${TMP_FOLDER}"
 
-    arch="$(dpkg --print-architecture)"
-    echo \
-      "deb [arch=$arch signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
-      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    sudo apt-get update
-    sudo apt-get install docker-ce docker-ce-cli containerd.io -y
-    sudo usermod -aG docker "${USER}"
-    echo "Reboot to use docker without 'sudo'"
-fi
+  echo "===== Custom scripts: Copying shell aliases to user home folder"
+  cp "${PWD}"/shell_aliases "${USER_HOME}"/.shell_aliases
+  echo "[ -f ~/.shell_aliases ] && . ~/.shell_aliases" >> "~/.zshrc"
+  echo "===== Custom scripts: Copying useful scripts to /usr/local/bin"
+  cp "${PWD}"/scripts/* /usr/local/bin/
 
-echo "Bye!"
-exit 0
+  cd -
+  rm -r "${TMP_FOLDER}"
+}
+
+install_and_configure_tmux() {
+  echo "===== tmux: Installing tmux and configuration"
+  install_packages tmux
+  git clone https://github.com/gpakosz/.tmux.git
+  ln -s -f .tmux/.tmux.conf
+}
+
+
+main() {
+  build_neovim
+  install_lunar_vim_ide
+  configure_nvim
+  install_zsh_oh_my_zsh
+  copy_custom_scripts_and_aliases
+  install_and_configure_tmux
+  exit 0
+}
+
+
+main
+
 
