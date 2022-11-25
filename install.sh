@@ -58,7 +58,7 @@ install_lunar_vim_ide() {
 
 configure_nvim() {
   echo "===== NEOVIM: installing plugins"
-  nvim --headless -c 'autocmd User PackerSync' -c 'qall' || true
+  nvim --headless +'autocmd User PackerComplete qall' +'PackerSync' || true
 
   echo "===== fonts: Installing fonts for nvim"
   TMP_FOLDER=$(mktemp -d)
