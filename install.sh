@@ -27,7 +27,7 @@ install_packages() {
 }
 
 build_neovim() {
-  echo "===== NEOVIM: Cleaning any existing configuration"
+  echo "===== NEOVIM: Cleaning existing configuration"
   rm -rf ~/.config/nvim
   rm -rf ~/.local/share/nvim
   rm -rf ~/.cache/nvim
@@ -42,6 +42,7 @@ build_neovim() {
   echo "===== NEOVIM: Building neovim 0.8"
   git checkout release-0.8
   make CMAKE_BUILD_TYPE=Release -j
+  #make CMAKE_EXTRA_FLAGS="-DCOMPILE_LUA=OFF -DCMAKE_INSTALL_PREFIX=$HOME/neovim" CMAKE_BUILD_TYPE=RelWithDebInfo -j
   sudo make install
 }
 
@@ -99,7 +100,7 @@ copy_custom_scripts_and_aliases() {
 install_and_configure_tmux() {
   echo "===== tmux: Installing tmux and configuration"
   install_packages tmux
-  git clone https://github.com/gpakosz/.tmux.git ~/
+  git clone https://github.com/gpakosz/.tmux.git ~/.tmux
   ln -s -f .tmux/.tmux.conf
 }
 
@@ -116,5 +117,4 @@ main() {
 
 
 main
-
 
