@@ -48,7 +48,7 @@ build_neovim() {
 
 install_lunar_vim_ide() {
   echo "===== LunarVim: installing dependencies"
-  install_packages xsel wl-clipboard ripgrep python3-pip
+  install_packages xsel wl-clipboard ripgrep python3-pip npm
   pip3 install pynvim
 
   echo "===== LunarVim: Cloning GitHub repository"
