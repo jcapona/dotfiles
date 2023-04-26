@@ -46,9 +46,16 @@ build_neovim() {
   sudo make install
 }
 
+install_nvm() {
+  install_packages curl
+  NVM_DIR=""
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh)"
+}
+
 install_lunar_vim_ide() {
   echo "===== LunarVim: installing dependencies"
-  install_packages xsel wl-clipboard ripgrep python3-pip npm
+
+  install_packages xsel wl-clipboard ripgrep python3-pip
   pip3 install pynvim
 
   echo "===== LunarVim: Cloning GitHub repository"
@@ -57,8 +64,8 @@ install_lunar_vim_ide() {
 
 
 configure_nvim() {
-  echo "===== NEOVIM: installing plugins"
-  nvim --headless +'autocmd User PackerComplete qall' +'PackerSync' || true
+#   echo "===== NEOVIM: installing plugins"
+#   nvim --headless +'autocmd User PackerComplete qall' +'PackerSync' || true
 
   echo "===== fonts: Installing fonts for nvim"
   TMP_FOLDER=$(mktemp -d)
@@ -115,6 +122,7 @@ main() {
   install_zsh_oh_my_zsh
   copy_custom_scripts_and_aliases
   install_and_configure_tmux
+  install_nvm
   exit 0
 }
 
