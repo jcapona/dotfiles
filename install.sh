@@ -39,8 +39,8 @@ build_neovim() {
   git clone https://github.com/neovim/neovim.git ~/neovim
   cd ~/neovim
 
-  echo "===== NEOVIM: Building neovim 0.8"
-  git checkout release-0.8
+  echo "===== NEOVIM: Building neovim 0.9"
+  git checkout release-0.9
   make CMAKE_BUILD_TYPE=Release -j
   #make CMAKE_EXTRA_FLAGS="-DCOMPILE_LUA=OFF -DCMAKE_INSTALL_PREFIX=$HOME/neovim" CMAKE_BUILD_TYPE=RelWithDebInfo -j
   sudo make install
@@ -71,14 +71,17 @@ configure_nvim() {
 
 install_zsh_oh_my_zsh() {
   echo "===== zsh & oh-my-zsh: Installing"
-  install_packages wget
-
-  sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.1.3/zsh-in-docker.sh)" -- \
+  ./zsh-install.sh \
+      -t https://github.com/spaceship-prompt/spaceship-prompt \
       -p git \
       -p ssh-agent \
-      -p 'history-substring-search' \
+      -p history-substring-search \
+      -p web-search \
       -p https://github.com/zsh-users/zsh-autosuggestions \
-      -p https://github.com/agkozak/zsh-z
+      -p https://github.com/agkozak/zsh-z \
+      -p https://github.com/zsh-users/zsh-completions \
+      -p https://github.com/unixorn/fzf-zsh-plugin \
+      -p https://github.com/zsh-users/zsh-syntax-highlighting
 }
 
 copy_custom_scripts_and_aliases() {
@@ -91,7 +94,7 @@ copy_custom_scripts_and_aliases() {
   cp "${PWD}"/shell_aliases ~/.shell_aliases
   echo "[ -f ~/.shell_aliases ] && . ~/.shell_aliases" >> ~/.zshrc
   echo "===== Custom scripts: Copying useful scripts to /usr/local/bin"
-  cp "${PWD}"/scripts/* /usr/local/bin/
+  sudo cp "${PWD}"/scripts/* /usr/local/bin/
 
   cd -
   rm -r "${TMP_FOLDER}"
