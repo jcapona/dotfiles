@@ -63,6 +63,14 @@ install_lunar_vim_ide() {
   git clone https://github.com/LunarVim/nvim-basic-ide.git ~/.config/nvim
 }
 
+install_nerd_font() {
+  NERD_FONT_FOLDER="~/.local/share/fonts"
+  rm -rf "${NERD_FONT_FOLDER}"
+  mkdir -p "${NERD_FONT_FOLDER}"
+  cd "${NERD_FONT_FOLDER}"
+  curl -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/DroidSansMono/DroidSansMNerdFont-Regular.otf
+  cd -
+}
 
 configure_nvim() {
 #   echo "===== NEOVIM: installing plugins"
@@ -128,6 +136,7 @@ main() {
   clone_dotfiles_repo
   build_neovim
   install_lunar_vim_ide
+  install_nerd_font
   configure_nvim
   install_zsh_oh_my_zsh
   copy_custom_scripts_and_aliases
