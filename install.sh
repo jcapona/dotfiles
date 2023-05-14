@@ -31,6 +31,7 @@ build_neovim() {
   rm -rf ~/.config/nvim
   rm -rf ~/.local/share/nvim
   rm -rf ~/.cache/nvim
+  rm -rf ~/neovim
 
   echo "===== NEOVIM: Installing build dependencies"
   install_packages ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen git
@@ -55,10 +56,10 @@ install_nvm() {
 install_lunar_vim_ide() {
   echo "===== LunarVim: installing dependencies"
 
-  install_packages xsel wl-clipboard ripgrep python3-pip
-  pip3 install pynvim
+  install_packages xsel wl-clipboard ripgrep python3-pip python3-pynvim
 
   echo "===== LunarVim: Cloning GitHub repository"
+  rm -rf ~/.config/nvim/
   git clone https://github.com/LunarVim/nvim-basic-ide.git ~/.config/nvim
 }
 
@@ -78,6 +79,7 @@ configure_nvim() {
 
 install_zsh_oh_my_zsh() {
   echo "===== zsh & oh-my-zsh: Installing"
+  cd "${DOTFILES_REPO_FOLDER}"
   ./zsh-install.sh \
       -t https://github.com/spaceship-prompt/spaceship-prompt \
       -p git \
@@ -89,33 +91,41 @@ install_zsh_oh_my_zsh() {
       -p https://github.com/zsh-users/zsh-completions \
       -p https://github.com/unixorn/fzf-zsh-plugin \
       -p https://github.com/zsh-users/zsh-syntax-highlighting
+  cd -
+  chsh -s $(which zsh)
+}
+
+clone_dotfiles_repo() {
+  echo "===== Custom scripts: Cloning 'dotfiles' GitHub repository"
+  DOTFILES_REPO_FOLDER=$(mktemp -d)
+  git clone https://github.com/jcapona/dotfiles.git  "${DOTFILES_REPO_FOLDER}"
+}
+
+clone_dotfiles_repo() {
+  rm -r "${DOTFILES_REPO_FOLDER}"
 }
 
 copy_custom_scripts_and_aliases() {
-  echo "===== Custom scripts: Cloning 'dotfiles' GitHub repository"
-  TMP_FOLDER=$(mktemp -d)
-  git clone https://github.com/jcapona/dotfiles.git  "${TMP_FOLDER}"
-  cd "${TMP_FOLDER}"
-
+  cd "${DOTFILES_REPO_FOLDER}"
   echo "===== Custom scripts: Copying shell aliases to user home folder"
   cp "${PWD}"/shell_aliases ~/.shell_aliases
   echo "[ -f ~/.shell_aliases ] && . ~/.shell_aliases" >> ~/.zshrc
   echo "===== Custom scripts: Copying useful scripts to /usr/local/bin"
   sudo cp "${PWD}"/scripts/* /usr/local/bin/
-
   cd -
-  rm -r "${TMP_FOLDER}"
 }
 
 install_and_configure_tmux() {
   echo "===== tmux: Installing tmux and configuration"
   install_packages tmux
+  rm -rf ~/.tmux
   git clone https://github.com/gpakosz/.tmux.git ~/.tmux
   ln -s -f .tmux/.tmux.conf
 }
 
 
 main() {
+  clone_dotfiles_repo
   build_neovim
   install_lunar_vim_ide
   configure_nvim
@@ -123,7 +133,7 @@ main() {
   copy_custom_scripts_and_aliases
   install_and_configure_tmux
   install_nvm
-  exit 0
+  remove_dotfiles_repo
 }
 
 
