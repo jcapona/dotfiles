@@ -2,6 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+DOTFILES_REPO_FOLDER=$(mktemp -d)
 
 install_packages() {
   PACKAGE_MANAGER_COMMAND=""
@@ -64,7 +65,7 @@ install_lunar_vim_ide() {
 }
 
 install_nerd_font() {
-  NERD_FONT_FOLDER="~/.local/share/fonts"
+  NERD_FONT_FOLDER="$HOME/.local/share/fonts"
   rm -rf "${NERD_FONT_FOLDER}"
   mkdir -p "${NERD_FONT_FOLDER}"
   cd "${NERD_FONT_FOLDER}"
@@ -82,7 +83,7 @@ configure_nvim() {
   cd "${TMP_FOLDER}"
   ./install.sh
   cd -
-  rm -r "${TMP_FOLDER}"
+  rm -rf "${TMP_FOLDER}"
 }
 
 install_zsh_oh_my_zsh() {
@@ -105,12 +106,11 @@ install_zsh_oh_my_zsh() {
 
 clone_dotfiles_repo() {
   echo "===== Custom scripts: Cloning 'dotfiles' GitHub repository"
-  DOTFILES_REPO_FOLDER=$(mktemp -d)
   git clone https://github.com/jcapona/dotfiles.git  "${DOTFILES_REPO_FOLDER}"
 }
 
-clone_dotfiles_repo() {
-  rm -r "${DOTFILES_REPO_FOLDER}"
+remove_dotfiles_repo() {
+  rm -rf "${DOTFILES_REPO_FOLDER}"
 }
 
 copy_custom_scripts_and_aliases() {
