@@ -35,7 +35,7 @@ build_neovim() {
   rm -rf ~/neovim
 
   echo "===== NEOVIM: Installing build dependencies"
-  install_packages ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen git
+  install_packages ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen
 
   echo "===== NEOVIM: Cloning GitHub repository"
   git clone https://github.com/neovim/neovim.git ~/neovim
@@ -105,6 +105,7 @@ install_zsh_oh_my_zsh() {
 }
 
 clone_dotfiles_repo() {
+  install_packages git
   echo "===== Custom scripts: Cloning 'dotfiles' GitHub repository"
   git clone https://github.com/jcapona/dotfiles.git  "${DOTFILES_REPO_FOLDER}"
 }
