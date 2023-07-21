@@ -52,16 +52,28 @@ install_nvm() {
   install_packages curl
   NVM_DIR=""
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh)"
+
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+  nvm install node
+  nvm install-latest-npm
 }
 
 install_lunar_vim_ide() {
   echo "===== LunarVim: installing dependencies"
+  install_packages cargo git make python3-pip python3
+  LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh) << EOF
+y
+y
+y
+EOF
 
-  install_packages xsel wl-clipboard ripgrep python3-pip python3-pynvim
-
-  echo "===== LunarVim: Cloning GitHub repository"
-  rm -rf ~/.config/nvim/
-  git clone https://github.com/LunarVim/nvim-basic-ide.git ~/.config/nvim
+  #install_packages xsel wl-clipboard ripgrep python3-pip python3-pynvim
+  #rm -rf ~/.config/nvim/
+  #echo "===== LunarVim: Cloning GitHub repository"
+  #git clone https://github.com/LunarVim/nvim-basic-ide.git ~/.config/nvim
 }
 
 install_nerd_font() {
@@ -136,13 +148,13 @@ install_and_configure_tmux() {
 main() {
   clone_dotfiles_repo
   build_neovim
-  install_lunar_vim_ide
-  install_nerd_font
-  configure_nvim
   install_zsh_oh_my_zsh
   copy_custom_scripts_and_aliases
   install_and_configure_tmux
   install_nvm
+  install_lunar_vim_ide
+  install_nerd_font
+  configure_nvim
   remove_dotfiles_repo
 }
 
