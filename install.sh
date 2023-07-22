@@ -69,6 +69,7 @@ y
 y
 y
 EOF
+  cp "${DOTFILES_REPO_FOLDER}" "${HOME}/.config/lvim"
 
   #install_packages xsel wl-clipboard ripgrep python3-pip python3-pynvim
   #rm -rf ~/.config/nvim/
