@@ -64,12 +64,15 @@ install_nvm() {
 install_lunar_vim_ide() {
   echo "===== LunarVim: installing dependencies"
   install_packages cargo git make python3-pip python3
+  curl https://sh.rustup.rs -sSf | sh -s -- -y
   LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh) << EOF
 y
 y
 y
 EOF
   cp "${DOTFILES_REPO_FOLDER}" "${HOME}/.config/lvim"
+  export PATH="$HOME/.local/bin:$PATH"
+  echo "export PATH=$HOME/.local/bin:\$PATH" >> ~/.zshrc
 
   #install_packages xsel wl-clipboard ripgrep python3-pip python3-pynvim
   #rm -rf ~/.config/nvim/
@@ -114,7 +117,7 @@ install_zsh_oh_my_zsh() {
       -p https://github.com/unixorn/fzf-zsh-plugin \
       -p https://github.com/zsh-users/zsh-syntax-highlighting
   cd -
-  chsh -s $(which zsh)
+  sudo chsh "${USER}" -s $(which zsh)
 }
 
 clone_dotfiles_repo() {
