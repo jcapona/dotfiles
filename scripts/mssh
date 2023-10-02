@@ -1,0 +1,35 @@
+#!/bin/bash
+
+run_ssh_copy_id() {
+  ssh-keygen -f "${HOME}/.ssh/known_hosts" -R "${host}"
+  ssh-copy-id "${user}@${host}"<<EOF
+yes
+EOF
+}
+
+while getopts u:h:n flag
+do
+  case "${flag}" in
+    u) user=${OPTARG};;
+    h) host=${OPTARG};;
+    n) copy_id=1;;
+    *) ;;
+  esac
+done
+
+if [ -z "${user}" ]; then
+  echo "No user specified, use the -u flag!"
+  exit 1
+fi
+
+if [ -z "${host}" ]; then
+  echo "No host specified, use the -h flag!"
+  exit 1
+fi
+
+if [ -n "${copy_id}" ]; then
+  run_ssh_copy_id
+fi
+
+ssh "${user}@${host}"
+
