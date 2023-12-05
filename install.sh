@@ -18,6 +18,8 @@ install_packages() {
       PACKAGE_MANAGER_COMMAND="sudo apt update && DEBIAN_FRONTEND=noninteractive sudo apt install -y"
   elif [ -x "$(command -v apk)" ]; then
       PACKAGE_MANAGER_COMMAND="sudo apk update && sudo apk add -U --no-cache"
+  elif [ -x "$(command -v dnf)" ]; then
+      PACKAGE_MANAGER_COMMAND="sudo dnf install -y"
   else
       echo "Cant install packages: couldn't find a supported package manager"
       exit 1

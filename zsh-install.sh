@@ -96,12 +96,14 @@ install_dependencies() {
             $Sudo yum install -y ncurses-compat-libs # this is required for AMZN Linux (ref: https://github.com/emqx/emqx/issues/2503)
         ;;
         *)
+          if [ -x "$(command -v apt-get)" ]; then
             $Sudo apt-get update
             $Sudo apt-get -y install git curl zsh locales
             if [ "$VERSION" != "14.04" ]; then
                 $Sudo apt-get -y install locales-all
             fi
             $Sudo locale-gen en_US.UTF-8
+          fi
     esac
 }
 
