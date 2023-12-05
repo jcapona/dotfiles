@@ -106,6 +106,7 @@ configure_nvim() {
 
 install_zsh_oh_my_zsh() {
   echo "===== zsh & oh-my-zsh: Installing"
+  install_packages zsh
   cd "${DOTFILES_REPO_FOLDER}"
   ./zsh-install.sh \
       -t https://github.com/spaceship-prompt/spaceship-prompt \
