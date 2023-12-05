@@ -70,7 +70,7 @@ y
 y
 y
 EOF
-  cp "${DOTFILES_REPO_FOLDER}" "${HOME}/.config/lvim"
+  cp "${DOTFILES_REPO_FOLDER}/config.lua" "${HOME}/.config/lvim"
   export PATH="$HOME/.local/bin:$PATH"
   echo "export PATH=$HOME/.local/bin:\$PATH" >> ~/.zshrc
 
