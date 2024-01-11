@@ -52,6 +52,9 @@ build_neovim() {
 
 install_nvm() {
   install_packages curl
+  if [ "$(uname -s)" = "Linux" ]; then
+    install_packages xsel
+  fi
   NVM_DIR=""
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh)"
 
