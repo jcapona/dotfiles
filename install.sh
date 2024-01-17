@@ -149,9 +149,9 @@ copy_custom_scripts_and_aliases() {
 install_and_configure_tmux() {
   echo "===== tmux: Installing tmux and configuration"
   install_packages tmux
-  rm -rf ~/.tmux
-  git clone https://github.com/gpakosz/.tmux.git ~/.tmux
-  ln -s -f .tmux/.tmux.conf
+  rm -rf ~/.tmux*
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  cp tmux.conf ~/.tmux.conf
 }
 
 
