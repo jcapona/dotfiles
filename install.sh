@@ -66,25 +66,6 @@ install_nvm() {
   nvm install-latest-npm
 }
 
-install_lunar_vim_ide() {
-  echo "===== LunarVim: installing dependencies"
-  install_packages cargo git make python3-pip python3
-  curl https://sh.rustup.rs -sSf | sh -s -- -y
-  LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh) << EOF
-y
-y
-y
-EOF
-  cp "${DOTFILES_REPO_FOLDER}/config.lua" "${HOME}/.config/lvim"
-  export PATH="$HOME/.local/bin:$PATH"
-  echo "export PATH=$HOME/.local/bin:\$PATH" >> ~/.zshrc
-
-  #install_packages xsel wl-clipboard ripgrep python3-pip python3-pynvim
-  #rm -rf ~/.config/nvim/
-  #echo "===== LunarVim: Cloning GitHub repository"
-  #git clone https://github.com/LunarVim/nvim-basic-ide.git ~/.config/nvim
-}
-
 install_nerd_font() {
   NERD_FONT_FOLDER="$HOME/.local/share/fonts"
   rm -rf "${NERD_FONT_FOLDER}"
@@ -92,19 +73,20 @@ install_nerd_font() {
   cd "${NERD_FONT_FOLDER}"
   curl -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/DroidSansMono/DroidSansMNerdFont-Regular.otf
   cd -
+
+  # echo "===== fonts: Installing fonts for nvim"
+  # TMP_FOLDER=$(mktemp -d)
+  # git clone https://github.com/ronniedroid/getnf.git "${TMP_FOLDER}"
+  # cd "${TMP_FOLDER}"
+  # ./install.sh
+  # cd -
+  # rm -rf "${TMP_FOLDER}"
 }
 
 configure_nvim() {
-#   echo "===== NEOVIM: installing plugins"
-#   nvim --headless +'autocmd User PackerComplete qall' +'PackerSync' || true
-
-  echo "===== fonts: Installing fonts for nvim"
-  TMP_FOLDER=$(mktemp -d)
-  git clone https://github.com/ronniedroid/getnf.git "${TMP_FOLDER}"
-  cd "${TMP_FOLDER}"
-  ./install.sh
-  cd -
-  rm -rf "${TMP_FOLDER}"
+  echo "===== copying custom nvim config"
+  mkdir -p "${HOME}/.config"
+  cp -r "${DOTFILES_REPO_FOLDER}/nvim" "${HOME}/.config/nvim"
 }
 
 install_zsh_oh_my_zsh() {
@@ -140,10 +122,15 @@ copy_custom_scripts_and_aliases() {
   cd "${DOTFILES_REPO_FOLDER}"
   echo "===== Custom scripts: Copying shell aliases to user home folder"
   cp "${PWD}"/shell_aliases ~/.shell_aliases
-  echo "[ -f ~/.shell_aliases ] && . ~/.shell_aliases" >> ~/.zshrc
+
   echo "===== Custom scripts: Copying useful scripts to /usr/local/bin"
   sudo cp "${PWD}"/scripts/* /usr/local/bin/
   cd -
+
+  echo "===== Updating zshrc"
+  echo "[ -f ~/.shell_aliases ] && . ~/.shell_aliases" >> ~/.zshrc
+  export PATH="$HOME/.local/bin:$PATH"
+  echo "export PATH=$HOME/.local/bin:\$PATH" >> ~/.zshrc
 }
 
 install_and_configure_tmux() {
@@ -151,7 +138,7 @@ install_and_configure_tmux() {
   install_packages tmux
   rm -rf ~/.tmux*
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-  cp tmux.conf ~/.tmux.conf
+  cp "${PWD}"/tmux.conf ~/.tmux.conf
 }
 
 install_wezterm() {
@@ -170,6 +157,7 @@ install_wezterm() {
   fi
 }
 
+
 main() {
   clone_dotfiles_repo
   build_neovim
@@ -177,10 +165,8 @@ main() {
   copy_custom_scripts_and_aliases
   install_and_configure_tmux
   install_nvm
-  install_lunar_vim_ide
   install_nerd_font
   configure_nvim
-  # install_wezterm
   remove_dotfiles_repo
 }
 
