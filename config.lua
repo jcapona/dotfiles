@@ -1,3 +1,5 @@
+-- Custom LunarVim config
+--
 -- Read the docs: https://www.lunarvim.org/docs/configuration
 -- Example configs: https://github.com/LunarVim/starter.lvim
 -- Video Tutorials: https://www.youtube.com/watch?v=sFA9kX-Ud_c&list=PLhoH5vyxr6QqGu0i7tt_XoVK9v-KvZ3m6
@@ -12,7 +14,7 @@ lvim.format_on_save = false
 
 
 -- Themes
-lvim.colorscheme = "github_dark_dimmed"
+lvim.colorscheme = "lunaperche"
 
 
 -- Keymappings [view all the defaults by pressing <leader>Lk]
