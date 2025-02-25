@@ -138,7 +138,7 @@ install_and_configure_tmux() {
   install_packages tmux
   rm -rf ~/.tmux*
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-  cp "${PWD}"/tmux.conf ~/.tmux.conf
+  cp "${DOTFILES_REPO_FOLDER}"/tmux.conf ~/.tmux.conf
 }
 
 install_wezterm() {
