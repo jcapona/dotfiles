@@ -72,6 +72,7 @@ return {
                 vim.keymap.set({ 'n', 'x' }, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
                 vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
             end
+            lsp_zero.on_attach(lsp_attach)
 
             lsp_zero.extend_lspconfig({
                 sign_text = true,
@@ -81,10 +82,11 @@ return {
 
             require('mason-lspconfig').setup({
                 ensure_installed = {
-                    "dockerls",
-                    "pyright",
-                    "clangd",
-                    "bashls",
+                    "pylsp",
+                    -- "dockerls",
+                    -- "pyright",
+                    -- "clangd",
+                    -- "bashls",
                 },
                 handlers = {
                     -- this first function is the "default handler"
