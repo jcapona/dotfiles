@@ -137,7 +137,12 @@ install_and_configure_tmux() {
   echo "===== tmux: Installing tmux and configuration"
   install_packages tmux
   rm -rf ~/.tmux*
+  # Install TPM plugin manager
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  # Install catppuccin
+  mkdir -p ~/.config/tmux/plugins/catppuccin
+  git clone -b v2.1.2 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugins/catppuccin/tmux
+
   cp "${DOTFILES_REPO_FOLDER}"/tmux.conf ~/.tmux.conf
 }
 
