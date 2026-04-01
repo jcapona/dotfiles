@@ -41,16 +41,10 @@ update_package_index() {
 }
 
 install_neovim() {
-  echo "===== NEOVIM: Cleaning existing configuration"
-  rm -rf ~/.config/nvim
-  rm -rf ~/.local/share/nvim
-  rm -rf ~/.cache/nvim
-
   if [[ "${PLATFORM}" = "Darwin" ]]; then
     echo "===== NEOVIM: Installing via homebrew"
     brew install neovim
   else
-    rm -rf ~/neovim
     echo "===== NEOVIM: Installing build dependencies"
     if [ -x "$(command -v apt)" ]; then
       install_packages ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen
@@ -61,7 +55,11 @@ install_neovim() {
     fi
 
     echo "===== NEOVIM: Cloning GitHub repository"
-    git clone https://github.com/neovim/neovim.git ~/neovim
+    if [ -d ~/neovim ]; then
+      (cd ~/neovim && git pull)
+    else
+      git clone https://github.com/neovim/neovim.git ~/neovim
+    fi
 
     echo "===== NEOVIM: Building neovim"
     (
@@ -101,6 +99,11 @@ install_nerd_font() {
 }
 
 configure_nvim() {
+  echo "===== NEOVIM: Cleaning existing configuration"
+  rm -rf ~/.config/nvim
+  rm -rf ~/.local/share/nvim
+  rm -rf ~/.cache/nvim
+
   echo "===== copying custom nvim config"
   if [[ "${PLATFORM}" = "Darwin" ]]; then
     install_packages tree-sitter-cli
@@ -128,10 +131,12 @@ install_zsh_oh_my_zsh() {
         -p https://github.com/unixorn/fzf-zsh-plugin \
         -p https://github.com/zsh-users/zsh-syntax-highlighting
   )
-  if [[ "${PLATFORM}" = "Darwin" ]]; then
-    chsh -s "$(which zsh)"
-  else
-    sudo chsh "${USER}" -s "$(which zsh)"
+  if [ "$(basename "$SHELL")" != "zsh" ]; then
+    if [[ "${PLATFORM}" = "Darwin" ]]; then
+      chsh -s "$(which zsh)"
+    else
+      sudo chsh "${USER}" -s "$(which zsh)"
+    fi
   fi
 }
 
@@ -153,20 +158,22 @@ copy_custom_scripts_and_aliases() {
   sudo cp "${DOTFILES_REPO_FOLDER}"/scripts/* /usr/local/bin/
 
   echo "===== Updating zshrc"
-  echo "[ -f ~/.shell_aliases ] && . ~/.shell_aliases" >> ~/.zshrc
-  export PATH="$HOME/.local/bin:$PATH"
-  echo "export PATH=$HOME/.local/bin:\$PATH" >> ~/.zshrc
+  grep -qF '~/.shell_aliases' ~/.zshrc 2>/dev/null || echo "[ -f ~/.shell_aliases ] && . ~/.shell_aliases" >> ~/.zshrc
+  grep -qF '.local/bin' ~/.zshrc 2>/dev/null || echo "export PATH=$HOME/.local/bin:\$PATH" >> ~/.zshrc
 }
 
 install_and_configure_tmux() {
   echo "===== tmux: Installing tmux and configuration"
   install_packages tmux
-  rm -rf ~/.tmux*
   # Install TPM plugin manager
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  if [ ! -d ~/.tmux/plugins/tpm ]; then
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  fi
   # Install catppuccin
-  mkdir -p ~/.config/tmux/plugins/catppuccin
-  git clone -b v2.1.2 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugins/catppuccin/tmux
+  if [ ! -d ~/.config/tmux/plugins/catppuccin/tmux ]; then
+    mkdir -p ~/.config/tmux/plugins/catppuccin
+    git clone -b v2.1.2 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugins/catppuccin/tmux
+  fi
 
   cp "${DOTFILES_REPO_FOLDER}"/tmux.conf ~/.tmux.conf
 }
