@@ -34,3 +34,5 @@ vim.opt.updatetime = 50
 vim.opt.colorcolumn = "120"
 
 vim.opt.clipboard:append { 'unnamed', 'unnamedplus' }
+
+vim.opt.foldenable = false
