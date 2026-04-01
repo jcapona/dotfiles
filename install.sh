@@ -171,22 +171,6 @@ install_and_configure_tmux() {
   cp "${DOTFILES_REPO_FOLDER}"/tmux.conf ~/.tmux.conf
 }
 
-install_wezterm() {
-  echo "===== wezterm: Installing wezterm and configuration"
-  cp "${DOTFILES_REPO_FOLDER}"/wezterm.lua ~/.wezterm.lua
-  if [ -x "$(command -v apt)" ]; then
-    curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
-    echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
-    install_packages wezterm-nightly
-  elif [ -x "$(command -v dnf)" ]; then
-    sudo dnf copr enable wezfurlong/wezterm-nightly
-    install_packages wezterm
-  elif [ -x "$(command -v brew)" ]; then
-    brew tap wez/wezterm-linuxbrew
-    install_packages wezterm
-  fi
-}
-
 
 main() {
   clone_dotfiles_repo
