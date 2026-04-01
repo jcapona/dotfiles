@@ -85,6 +85,7 @@ install_nerd_font() {
 
 configure_nvim() {
   echo "===== copying custom nvim config"
+  install_packages tree-sitter-cli
   mkdir -p "${HOME}/.config"
   cp -r "${DOTFILES_REPO_FOLDER}/nvim" "${HOME}/.config/nvim"
 }
