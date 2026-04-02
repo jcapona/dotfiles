@@ -33,6 +33,9 @@ alias pbcopy='xclip -selection clipboard'
 alias pbpaste='xclip -selection clipboard -o'
 alias docker-stop-rm='docker ps -aq | xargs docker stop | xargs docker rm'
 
+# work profile
+[ -f ~/.work_profile ] && . ~/.work_profile
+
 # if [ -x "$(command -v colima)" ]; then
 #   export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
 # fi
