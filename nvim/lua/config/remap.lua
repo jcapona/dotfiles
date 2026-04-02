@@ -26,8 +26,10 @@ vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
 vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
 vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
--- replace current word in the buffer
-vim.keymap.set({"v", "n"}, "<C-s>", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+-- replace current word in the buffer (normal mode)
+vim.keymap.set("n", "<C-s>", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+-- replace visual selection in the buffer (visual mode)
+vim.keymap.set("v", "<C-s>", [["zy:%s/<C-r>z/<C-r>z/gI<Left><Left><Left>]])
 
 -- make current file executable
 -- vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
