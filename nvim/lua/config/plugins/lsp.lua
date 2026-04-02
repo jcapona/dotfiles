@@ -82,9 +82,8 @@ return {
 
             require('mason-lspconfig').setup({
                 ensure_installed = {
-                    "pylsp",
+                    "pyright",
                     -- "dockerls",
-                    -- "pyright",
                     -- "clangd",
                     -- "bashls",
                 },
