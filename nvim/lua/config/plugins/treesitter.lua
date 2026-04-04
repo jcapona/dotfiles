@@ -4,7 +4,7 @@ return {
     lazy = false,
     build = ":TSUpdate",
     config = function()
-        local parsers = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "python", "javascript", "typescript" }
+        local parsers = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "python", "javascript", "typescript", "tsx", "jsdoc" }
 
         require("nvim-treesitter").install(parsers)
 

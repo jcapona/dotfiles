@@ -83,6 +83,8 @@ return {
             require('mason-lspconfig').setup({
                 ensure_installed = {
                     "pyright",
+                    "ts_ls",
+                    "eslint",
                     -- "dockerls",
                     -- "clangd",
                     -- "bashls",
@@ -92,6 +94,16 @@ return {
                     -- it applies to every language server without a "custom handler"
                     function(server_name)
                         require('lspconfig')[server_name].setup({})
+                    end,
+                    ['eslint'] = function()
+                        require('lspconfig').eslint.setup({
+                            on_attach = function(client, bufnr)
+                                vim.api.nvim_create_autocmd('BufWritePre', {
+                                    buffer = bufnr,
+                                    command = 'EslintFixAll',
+                                })
+                            end,
+                        })
                     end,
                 }
             })
