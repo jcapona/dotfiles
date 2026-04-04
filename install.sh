@@ -181,6 +181,9 @@ install_and_configure_tmux() {
   fi
 
   cp "${DOTFILES_REPO_FOLDER}"/tmux.conf ~/.tmux.conf
+
+  # Install tmux plugins via TPM
+  ~/.tmux/plugins/tpm/bin/install_plugins
 }
 
 
