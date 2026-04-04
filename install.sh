@@ -40,33 +40,38 @@ update_package_index() {
   fi
 }
 
+build_neovim_from_source() {
+  echo "===== NEOVIM: Installing build dependencies"
+  if [ -x "$(command -v apt)" ]; then
+    install_packages ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen
+  elif [ -x "$(command -v dnf)" ]; then
+    install_packages ninja-build gettext libtool autoconf automake cmake gcc-c++ pkgconfig unzip curl doxygen
+  elif [ -x "$(command -v apk)" ]; then
+    install_packages ninja gettext libtool autoconf automake cmake build-base pkgconf unzip curl doxygen
+  fi
+
+  echo "===== NEOVIM: Cloning GitHub repository"
+  if [ -d ~/neovim ]; then
+    (cd ~/neovim && git pull)
+  else
+    git clone https://github.com/neovim/neovim.git ~/neovim
+  fi
+
+  echo "===== NEOVIM: Building neovim"
+  (
+    cd ~/neovim
+    make CMAKE_BUILD_TYPE=Release -j
+    sudo make install
+  )
+}
+
 install_neovim() {
   if [[ "${PLATFORM}" = "Darwin" ]]; then
     echo "===== NEOVIM: Installing via homebrew"
     brew install neovim
   else
-    echo "===== NEOVIM: Installing build dependencies"
-    if [ -x "$(command -v apt)" ]; then
-      install_packages ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen
-    elif [ -x "$(command -v dnf)" ]; then
-      install_packages ninja-build gettext libtool autoconf automake cmake gcc-c++ pkgconfig unzip curl doxygen
-    elif [ -x "$(command -v apk)" ]; then
-      install_packages ninja gettext libtool autoconf automake cmake build-base pkgconf unzip curl doxygen
-    fi
-
-    echo "===== NEOVIM: Cloning GitHub repository"
-    if [ -d ~/neovim ]; then
-      (cd ~/neovim && git pull)
-    else
-      git clone https://github.com/neovim/neovim.git ~/neovim
-    fi
-
-    echo "===== NEOVIM: Building neovim"
-    (
-      cd ~/neovim
-      make CMAKE_BUILD_TYPE=Release -j
-      sudo make install
-    )
+    # build_neovim_from_source
+    install_packages neovim
   fi
 }
 
