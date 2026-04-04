@@ -185,6 +185,7 @@ install_and_configure_tmux() {
 
 
 main() {
+  echo "===== Starting dotfiles installation ====="
   clone_dotfiles_repo
   update_package_index
   install_neovim
@@ -195,6 +196,7 @@ main() {
   install_nerd_font
   configure_nvim
   remove_dotfiles_repo
+  echo "===== Installation complete! Restart your shell or run: exec zsh ====="
 }
 
 
