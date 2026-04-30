@@ -74,6 +74,12 @@ wget -O - https://raw.githubusercontent.com/jcapona/dotfiles/master/install.sh |
 | `<S-l>` | Next buffer |
 | `<S-w>` | Close buffer |
 
+### Git
+
+| Key | Action |
+|-----|--------|
+| `<Space>gb` | Blame current line (gitsigns) |
+
 ### Multicursor
 
 | Key | Action |
@@ -103,6 +109,7 @@ Configured via Mason: **pyright** (Python)
 | `v` | Begin selection (copy mode, vi-style) |
 | `C-v` | Toggle rectangle selection (copy mode) |
 | `y` | Copy selection to clipboard (copy mode) |
+| `F12` | Open tmux-menus popup |
 
 Pane navigation via **tmux-pain-control** (`prefix + h/j/k/l`).
 
