@@ -79,3 +79,14 @@ build_for() {
         fi
         docker exec "${CONTAINER_NAME}" /build-deb
 }
+
+# --- SSH pane tinting (B + trap): purple bg while logged into a remote box ---
+# OSC 11 sets terminal bg; passthrough wrapper used when tmux runs on this host.
+if [[ -n "$SSH_CONNECTION" ]]; then
+  if [[ -n "$TMUX" ]]; then
+    printf '\033Ptmux;\033\033]11;#241a2b\007\033\\'
+  else
+    printf '\033]11;#241a2b\007'
+  fi
+  trap 'printf "\033]111\007"' EXIT   # repaint default bg on clean logout
+fi
