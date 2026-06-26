@@ -85,6 +85,7 @@ return {
                     "pyright",
                     "ts_ls",
                     "eslint",
+                    "jsonls",
                     -- "dockerls",
                     -- "clangd",
                     -- "bashls",
