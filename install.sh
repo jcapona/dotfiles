@@ -107,16 +107,23 @@ install_neovim() {
 }
 
 install_nvm() {
-  if [[ "${PLATFORM}" != "Darwin" ]]; then
-    install_packages curl
-  fi
-  if [[ "${PLATFORM}" = "Linux" ]]; then
-    install_packages xsel
-  fi
-  NVM_DIR=""
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh)"
-
   export NVM_DIR="$HOME/.nvm"
+
+  # Skip the nvm bootstrap (and its deps) if nvm is already installed.
+  if [ -s "$NVM_DIR/nvm.sh" ]; then
+    echo "===== NVM: Already installed, skipping bootstrap"
+  else
+    if [[ "${PLATFORM}" != "Darwin" ]]; then
+      install_packages curl
+    fi
+    if [[ "${PLATFORM}" = "Linux" ]]; then
+      install_packages xsel
+    fi
+    NVM_DIR=""
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh)"
+    export NVM_DIR="$HOME/.nvm"
+  fi
+
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
