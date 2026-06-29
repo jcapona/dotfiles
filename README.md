@@ -14,6 +14,14 @@ or
 wget -O - https://raw.githubusercontent.com/jcapona/dotfiles/master/install.sh | bash
 ```
 
+### From a local clone
+
+To install from a checked-out copy of this repo instead of cloning from GitHub:
+
+```
+./install.sh --local
+```
+
 ## What gets installed
 
 - **Neovim** — via Homebrew (macOS) or package manager (Linux)

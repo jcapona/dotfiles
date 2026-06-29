@@ -2,8 +2,39 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-DOTFILES_REPO_FOLDER=$(mktemp -d)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLATFORM=$(uname)
+LOCAL_INSTALL=false
+DOTFILES_REPO_FOLDER=""
+
+usage() {
+  cat <<EOF
+Usage: ./install.sh [--local]
+
+  --local   Install from this local repository instead of cloning from GitHub.
+  -h, --help  Show this help.
+EOF
+}
+
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --local)
+        LOCAL_INSTALL=true
+        ;;
+      -h|--help)
+        usage
+        exit 0
+        ;;
+      *)
+        echo "Unknown argument: $1" >&2
+        usage >&2
+        exit 1
+        ;;
+    esac
+    shift
+  done
+}
 
 ensure_homebrew() {
   if ! [ -x "$(command -v brew)" ]; then
@@ -145,13 +176,23 @@ install_zsh_oh_my_zsh() {
   fi
 }
 
-clone_dotfiles_repo() {
+prepare_dotfiles_repo() {
+  if [[ "${LOCAL_INSTALL}" = true ]]; then
+    DOTFILES_REPO_FOLDER="${SCRIPT_DIR}"
+    echo "===== Custom scripts: Using local repository at ${DOTFILES_REPO_FOLDER}"
+    return
+  fi
+  DOTFILES_REPO_FOLDER=$(mktemp -d)
   install_packages git
   echo "===== Custom scripts: Cloning 'dotfiles' GitHub repository"
   git clone https://github.com/jcapona/dotfiles.git "${DOTFILES_REPO_FOLDER}"
 }
 
 remove_dotfiles_repo() {
+  # Never delete the user's working tree when installing locally.
+  if [[ "${LOCAL_INSTALL}" = true ]]; then
+    return
+  fi
   rm -rf "${DOTFILES_REPO_FOLDER}"
 }
 
@@ -188,8 +229,9 @@ install_and_configure_tmux() {
 
 
 main() {
+  parse_args "$@"
   echo "===== Starting dotfiles installation ====="
-  clone_dotfiles_repo
+  prepare_dotfiles_repo
   update_package_index
   install_neovim
   install_zsh_oh_my_zsh
@@ -203,4 +245,4 @@ main() {
 }
 
 
-main
+main "$@"
