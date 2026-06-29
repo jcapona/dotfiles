@@ -153,9 +153,18 @@ configure_nvim() {
 install_zsh_oh_my_zsh() {
   echo "===== zsh & oh-my-zsh: Installing"
   install_packages zsh
+
+  # zsh-install.sh's dependency step sources /etc/os-release, which doesn't
+  # exist on macOS (and aborts the script under `set -e`). zsh is already
+  # installed above, so skip that step with -x on Darwin.
+  local skip_deps=""
+  if [[ "${PLATFORM}" = "Darwin" ]]; then
+    skip_deps="-x"
+  fi
+
   (
     cd "${DOTFILES_REPO_FOLDER}"
-    ./zsh-install.sh \
+    ./zsh-install.sh ${skip_deps} \
         -t https://github.com/spaceship-prompt/spaceship-prompt \
         -p git \
         -p ssh-agent \
