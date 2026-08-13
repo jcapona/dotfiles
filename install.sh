@@ -237,6 +237,12 @@ install_and_configure_tmux() {
     git clone -b v2.1.2 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugins/catppuccin/tmux
   fi
 
+  # Helper scripts referenced by tmux.conf. They must live outside the repo,
+  # which is deleted after a non-local install.
+  mkdir -p ~/.tmux/scripts
+  cp "${DOTFILES_REPO_FOLDER}"/tmux/*.sh ~/.tmux/scripts/
+  chmod +x ~/.tmux/scripts/*.sh
+
   cp "${DOTFILES_REPO_FOLDER}"/tmux.conf ~/.tmux.conf
 
   # Install tmux plugins via TPM
