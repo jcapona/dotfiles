@@ -117,13 +117,20 @@ Configured via Mason: **pyright** (Python)
 | `v` | Begin selection (copy mode, vi-style) |
 | `C-v` | Toggle rectangle selection (copy mode) |
 | `y` | Copy selection to clipboard (copy mode) |
-| `F12` | Open tmux-menus popup |
+| `prefix + F12` | Open tmux-menus popup |
+| `F12` (no prefix) | Toggle the prefix off/on — lets keys fall through to a nested/remote tmux. Only bound on the local machine (skipped when `$SSH_TTY` is set) |
+| `prefix + p` / `prefix + o` | Previous window / next pane (tmux builtins, explicitly reclaimed from tmux-agent-status) |
+| `prefix + S` | Agent switcher popup |
+| `prefix + O` | Toggle agent sidebar |
+| `prefix + N` | Jump to next finished agent |
+| `prefix + W` | Put session in wait mode |
+| `prefix + P` | Park session for later |
 
 Pane navigation via **tmux-pain-control** (`prefix + h/j/k/l`).
 
 ### Plugins
 
-tpm, tmux-sensible, tmux-yank, tmux-resurrect, tmux-continuum (auto-restore), tmux-pain-control, tmux-menus, treemux, catppuccin (macchiato)
+tpm, tmux-sensible, tmux-yank, tmux-resurrect, tmux-continuum (auto-restore), tmux-pain-control, tmux-menus, treemux, tmux-agent-status, catppuccin (macchiato)
 
 ## Shell aliases
 
