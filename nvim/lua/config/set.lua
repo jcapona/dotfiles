@@ -35,4 +35,20 @@ vim.opt.colorcolumn = "120"
 
 vim.opt.clipboard:append { 'unnamed', 'unnamedplus' }
 
+-- Clipboard over SSH/mosh. On a headless remote both xclip and xsel are usually
+-- installed but $DISPLAY is empty, so Neovim's auto-detected provider copies
+-- into a dead X server and the yank silently vanishes. Force the terminal's
+-- OSC 52 escape instead: tmux (set-clipboard on) and mosh relay it all the way
+-- back to the local terminal's clipboard. Guarded on $SSH_TTY + no display so
+-- the laptop keeps its native provider.
+local function empty(v) return v == nil or v == '' end
+if vim.env.SSH_TTY and empty(vim.env.DISPLAY) and empty(vim.env.WAYLAND_DISPLAY) then
+  local osc52 = require('vim.ui.clipboard.osc52')
+  vim.g.clipboard = {
+    name = 'OSC 52',
+    copy = { ['+'] = osc52.copy('+'), ['*'] = osc52.copy('*') },
+    paste = { ['+'] = osc52.paste('+'), ['*'] = osc52.paste('*') },
+  }
+end
+
 vim.opt.foldenable = false
