@@ -120,7 +120,12 @@ zshrc_template() {
 export LANG='en_US.UTF-8'
 export LANGUAGE='en_US:en'
 export LC_ALL='en_US.UTF-8'
-export TERM=xterm
+# Only a fallback for environments that start a shell with no TERM at all (bare
+# containers, some CI). Never overwrite it: the terminal and tmux already set a
+# correct value, and forcing "xterm" downgrades the session to 8 colours --
+# tmux hands panes tmux-256color, so an unconditional export threw away 256.
+: "\${TERM:=xterm-256color}"
+export TERM
 
 ##### Zsh/Oh-my-Zsh Configuration
 export ZSH="$_HOME/.oh-my-zsh"
