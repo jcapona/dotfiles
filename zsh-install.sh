@@ -97,7 +97,7 @@ install_dependencies() {
         ;;
         *)
           if [ -x "$(command -v apt-get)" ]; then
-            $Sudo apt-get update
+            [ -n "$DOTFILES_PKG_INDEX_FRESH" ] || $Sudo apt-get update
             $Sudo apt-get -y install git curl zsh locales
             if [ "$VERSION" != "14.04" ]; then
                 $Sudo apt-get -y install locales-all

@@ -69,6 +69,8 @@ update_package_index() {
   elif [ -x "$(command -v apk)" ]; then
     sudo apk update
   fi
+  # Tell child scripts (zsh-install.sh) the index is fresh so they skip their own.
+  export DOTFILES_PKG_INDEX_FRESH=1
 }
 
 build_neovim_from_source() {
