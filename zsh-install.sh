@@ -136,6 +136,10 @@ plugins=($_PLUGINS)
 EOM
     printf "$ZSHRC_APPEND"
     printf "\nsource \$ZSH/oh-my-zsh.sh\n"
+    # Freeze tty modes so zsh restores them after every command. Without this a
+    # program that dies without resetting the terminal (onlcr left off) ratchets
+    # the prompt into a staircase until the next `stty sane`.
+    printf "\nttyctl -f\n"
 }
 
 powerline10k_config() {
@@ -156,7 +160,7 @@ cd /tmp
 
 # Install On-My-Zsh
 if [ ! -d "$HOME"/.oh-my-zsh ]; then
-    sh -c "$(curl https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" "" --unattended
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" "" --unattended
 fi
 
 # Generate plugin list

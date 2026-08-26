@@ -10,7 +10,11 @@ alias sdisable='sudo systemctl disable'
 alias l='ls'
 alias la='ls -a'
 alias ll='ls -lah'
-alias ls='ls --color=auto'
+# BSD ls (macOS) rejects --color; use -G there, GNU --color=auto elsewhere.
+case "$OSTYPE" in
+  darwin*) alias ls='ls -G' ;;
+  *) alias ls='ls --color=auto' ;;
+esac
 
 # git
 alias git-fix-perm='git diff -p -R --no-ext-diff --no-color | grep -E "^(diff|(old|new) mode)" --color=never | git apply'
