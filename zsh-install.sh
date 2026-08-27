@@ -136,10 +136,12 @@ plugins=($_PLUGINS)
 EOM
     printf "$ZSHRC_APPEND"
     printf "\nsource \$ZSH/oh-my-zsh.sh\n"
-    # Freeze tty modes so zsh restores them after every command. Without this a
-    # program that dies without resetting the terminal (onlcr left off) ratchets
-    # the prompt into a staircase until the next `stty sane`.
-    printf "\nttyctl -f\n"
+    # Reset the line discipline, THEN freeze it. ttyctl makes zsh restore tty
+    # modes after every command -- recovering from a program that dies leaving
+    # onlcr off (staircase). But freezing FIRST cements an -onlcr the shell
+    # inherited (a tmux pane left raw), re-applying that staircase forever; stty
+    # sane clears it so the state ttyctl freezes is a good one.
+    printf "\nstty sane 2>/dev/null\nttyctl -f\n"
 }
 
 powerline10k_config() {
