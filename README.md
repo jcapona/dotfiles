@@ -26,7 +26,7 @@ To install from a checked-out copy of this repo instead of cloning from GitHub:
 
 - **Neovim** — via Homebrew (macOS) or package manager (Linux)
 - **Zsh + Oh My Zsh** — with spaceship prompt, autosuggestions, syntax highlighting, fzf, zsh-z, and more
-- **tmux** — with TPM plugin manager and catppuccin theme
+- **tmux** — with TPM plugin manager and a hand-rolled Tokyo Night status line
 - **NVM** — Node.js version manager (latest)
 - **Nerd Font** — DroidSansMono for terminal icons
 - **Shell aliases** — git shortcuts, systemd helpers, utility functions
@@ -100,7 +100,7 @@ To install from a checked-out copy of this repo instead of cloning from GitHub:
 
 ### Plugins
 
-lsp-zero, nvim-cmp, Mason, Treesitter, Telescope, Neo-tree, barbar, lualine, gitsigns, multicursor, undotree, todo-comments, alpha (dashboard), tokyonight theme, catppuccin (tmux)
+lsp-zero, nvim-cmp, Mason, Treesitter, Telescope, Neo-tree, barbar, lualine, gitsigns, multicursor, undotree, todo-comments, alpha (dashboard), tokyonight theme
 
 ### LSP servers
 
@@ -130,7 +130,7 @@ Pane navigation via **tmux-pain-control** (`prefix + h/j/k/l`).
 
 ### Plugins
 
-tpm, tmux-sensible, tmux-yank, tmux-resurrect, tmux-continuum (auto-restore), tmux-pain-control, tmux-menus, treemux, tmux-agent-status, catppuccin (macchiato)
+tpm, tmux-sensible, tmux-yank, tmux-resurrect, tmux-continuum (auto-restore), tmux-pain-control, tmux-menus, treemux, tmux-agent-status
 
 ## Shell aliases
 

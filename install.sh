@@ -233,11 +233,6 @@ install_and_configure_tmux() {
   if [ ! -d ~/.tmux/plugins/tpm ]; then
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   fi
-  # Install catppuccin
-  if [ ! -d ~/.config/tmux/plugins/catppuccin/tmux ]; then
-    mkdir -p ~/.config/tmux/plugins/catppuccin
-    git clone -b v2.1.2 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugins/catppuccin/tmux
-  fi
 
   cp "${DOTFILES_REPO_FOLDER}"/tmux.conf ~/.tmux.conf
 
