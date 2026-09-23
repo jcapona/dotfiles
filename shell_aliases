@@ -80,13 +80,17 @@ build_for() {
         docker exec "${CONTAINER_NAME}" /build-deb
 }
 
-# --- SSH pane tinting (B + trap): purple bg while logged into a remote box ---
-# OSC 11 sets terminal bg; passthrough wrapper used when tmux runs on this host.
-if [[ -n "$SSH_CONNECTION" ]]; then
-  if [[ -n "$TMUX" ]]; then
-    printf '\033Ptmux;\033\033]11;#241a2b\007\033\\'
-  else
-    printf '\033]11;#241a2b\007'
-  fi
-  trap 'printf "\033]111\007"' EXIT   # repaint default bg on clean logout
-fi
+# --- SSH pane tinting: disabled ---
+# Tinted the background purple over SSH so a remote box was obvious. tmux.conf
+# now sets window-style, which paints every pane background itself, so this
+# OSC 11 never reaches the screen inside tmux -- and outside tmux is not a case
+# that happens here. Re-enabling it means dropping window-style, or picking the
+# remote tint from the theme's palette instead of hardcoding this purple.
+# if [[ -n "$SSH_CONNECTION" ]]; then
+#   if [[ -n "$TMUX" ]]; then
+#     printf '\033Ptmux;\033\033]11;#241a2b\007\033\\'
+#   else
+#     printf '\033]11;#241a2b\007'
+#   fi
+#   trap 'printf "\033]111\007"' EXIT   # repaint default bg on clean logout
+# fi
