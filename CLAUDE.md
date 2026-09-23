@@ -10,7 +10,6 @@ Personal dotfiles for macOS and Linux (Ubuntu/Debian, Fedora, Alpine): Neovim, z
 ./install.sh --sync    # copy repo config into place (aliases, scripts, tmux.conf, nvim) — no packages, no clones
 ./install.sh --local   # full install from this checkout instead of cloning GitHub
 ./install.sh           # full install; clones github.com/jcapona/dotfiles into a temp dir first
-docker build .         # Ubuntu smoke test — runs install.sh WITHOUT --local, so it tests GitHub master, not local edits
 ```
 
 After editing any config, `./install.sh --sync` is the way to see it live: it reloads running tmux sessions itself; nvim needs a restart.
