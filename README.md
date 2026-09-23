@@ -22,15 +22,29 @@ To install from a checked-out copy of this repo instead of cloning from GitHub:
 ./install.sh --local
 ```
 
+### Syncing config changes
+
+After editing a config file here, push it into place without reinstalling
+anything:
+
+```
+./install.sh --sync
+```
+
+This copies `shell_aliases`, `tmux.conf`, `nvim/` and `scripts/` to their
+destinations and stops — no packages, no plugin clones, no `~/.zshrc`
+regeneration. It reloads running tmux sessions itself; nvim needs a restart.
+Implies `--local`, so it always syncs from this checkout.
+
 ## What gets installed
 
 - **Neovim** — via Homebrew (macOS) or package manager (Linux)
 - **Zsh + Oh My Zsh** — with spaceship prompt, autosuggestions, syntax highlighting, fzf, zsh-z, and more
-- **tmux** — with TPM plugin manager and a hand-rolled Tokyo Night status line
+- **tmux** — with TPM plugin manager and a hand-rolled Gruvbox status line
 - **NVM** — Node.js version manager (latest)
 - **Nerd Font** — DroidSansMono for terminal icons
 - **Shell aliases** — git shortcuts, systemd helpers, utility functions
-- **Custom scripts** — `mssh`, `sync-dir`, `sync-pi`, `new-pi`, `transfer-sh`
+- **Custom scripts** — `mssh`, `sync-dir`, `sync-pi`, `new-pi`, `transfer-sh` (installed to `~/.local/bin`)
 
 ## Neovim
 
