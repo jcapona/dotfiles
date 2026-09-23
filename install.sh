@@ -5,13 +5,16 @@ IFS=$'\n\t'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLATFORM=$(uname)
 LOCAL_INSTALL=false
+SYNC_ONLY=false
 DOTFILES_REPO_FOLDER=""
 
 usage() {
   cat <<EOF
-Usage: ./install.sh [--local]
+Usage: ./install.sh [--local | --sync]
 
   --local   Install from this local repository instead of cloning from GitHub.
+  --sync    Copy this repository's config files into place and stop. No
+            packages, no plugin clones, no zshrc regeneration. Implies --local.
   -h, --help  Show this help.
 EOF
 }
@@ -20,6 +23,10 @@ parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --local)
+        LOCAL_INSTALL=true
+        ;;
+      --sync)
+        SYNC_ONLY=true
         LOCAL_INSTALL=true
         ;;
       -h|--help)
@@ -144,19 +151,18 @@ install_nerd_font() {
 }
 
 configure_nvim() {
-  echo "===== NEOVIM: Cleaning existing configuration"
-  rm -rf ~/.config/nvim
+  # The plugin, state and cache trees are install-only: wiping them forces a
+  # clean re-bootstrap. sync_nvim_config replaces the config tree itself.
+  echo "===== NEOVIM: Cleaning plugin, state and cache directories"
   rm -rf ~/.local/share/nvim
   rm -rf ~/.cache/nvim
 
-  echo "===== copying custom nvim config"
   if [[ "${PLATFORM}" = "Darwin" ]]; then
     install_packages tree-sitter-cli
   else
     npm install -g tree-sitter-cli
   fi
-  mkdir -p "${HOME}/.config"
-  cp -r "${DOTFILES_REPO_FOLDER}/nvim" "${HOME}/.config/nvim"
+  sync_nvim_config
 }
 
 install_zsh_oh_my_zsh() {
@@ -214,12 +220,67 @@ remove_dotfiles_repo() {
   rm -rf "${DOTFILES_REPO_FOLDER}"
 }
 
-copy_custom_scripts_and_aliases() {
-  echo "===== Custom scripts: Copying shell aliases to user home folder"
+sync_shell_aliases() {
+  echo "===== sync: shell aliases -> ~/.shell_aliases"
   cp "${DOTFILES_REPO_FOLDER}"/shell_aliases ~/.shell_aliases
+}
 
-  echo "===== Custom scripts: Copying useful scripts to /usr/local/bin"
-  sudo cp "${DOTFILES_REPO_FOLDER}"/scripts/* /usr/local/bin/
+sync_scripts() {
+  local bin_dir="${HOME}/.local/bin"
+  echo "===== sync: scripts -> ${bin_dir}"
+  mkdir -p "${bin_dir}"
+  # install(1), not cp: it sets the mode explicitly, so a script whose repo mode
+  # is not executable still lands runnable. cp preserves the source mode, which
+  # is how sync-pi ended up in /usr/local/bin as 644.
+  install -m 755 "${DOTFILES_REPO_FOLDER}"/scripts/* "${bin_dir}/"
+}
+
+sync_tmux_conf() {
+  echo "===== sync: tmux.conf -> ~/.tmux.conf"
+  cp "${DOTFILES_REPO_FOLDER}"/tmux.conf ~/.tmux.conf
+  # Pick the change up in sessions that are already running. No server is the
+  # normal case on a fresh box, so a failed has-session is not an error.
+  if tmux has-session 2>/dev/null; then
+    tmux source-file ~/.tmux.conf
+    echo "       reloaded running tmux sessions"
+  fi
+}
+
+sync_nvim_config() {
+  echo "===== sync: nvim config -> ~/.config/nvim"
+  # Only the config tree. A full install also clears ~/.local/share/nvim and
+  # ~/.cache/nvim; a sync must not, or every run re-downloads every Mason
+  # server, Treesitter parser and lazy clone.
+  local lock="${HOME}/.config/nvim/lazy-lock.json"
+  local saved=""
+  if [ -f "${lock}" ]; then
+    saved=$(mktemp)
+    cp "${lock}" "${saved}"
+  fi
+
+  mkdir -p "${HOME}/.config"
+  rm -rf "${HOME}/.config/nvim"
+  cp -r "${DOTFILES_REPO_FOLDER}/nvim" "${HOME}/.config/nvim"
+
+  # lazy-lock.json is gitignored, so it is this machine's pin set, not the
+  # repo's. Keep the local one; drop any stray copy the source tree carried.
+  if [ -n "${saved}" ]; then
+    mv "${saved}" "${lock}"
+  else
+    rm -f "${lock}"
+  fi
+}
+
+sync_dotfiles() {
+  sync_shell_aliases
+  sync_scripts
+  sync_tmux_conf
+  sync_nvim_config
+}
+
+copy_custom_scripts_and_aliases() {
+  sync_shell_aliases
+  sync_scripts
 
   echo "===== Updating zshrc"
   grep -qF '~/.shell_aliases' ~/.zshrc 2>/dev/null || echo "[ -f ~/.shell_aliases ] && . ~/.shell_aliases" >> ~/.zshrc
@@ -234,7 +295,7 @@ install_and_configure_tmux() {
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   fi
 
-  cp "${DOTFILES_REPO_FOLDER}"/tmux.conf ~/.tmux.conf
+  sync_tmux_conf
 
   # Install tmux plugins via TPM
   ~/.tmux/plugins/tpm/bin/install_plugins
@@ -243,6 +304,15 @@ install_and_configure_tmux() {
 
 main() {
   parse_args "$@"
+
+  if [[ "${SYNC_ONLY}" = true ]]; then
+    prepare_dotfiles_repo
+    echo "===== Syncing dotfiles from ${DOTFILES_REPO_FOLDER} ====="
+    sync_dotfiles
+    echo "===== Sync complete! Restart nvim to pick up its config. ====="
+    return
+  fi
+
   echo "===== Starting dotfiles installation ====="
   prepare_dotfiles_repo
   update_package_index
