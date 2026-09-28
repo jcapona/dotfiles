@@ -35,19 +35,24 @@ vim.opt.colorcolumn = "120"
 
 vim.opt.clipboard:append { 'unnamed', 'unnamedplus' }
 
--- Clipboard over SSH/mosh. On a headless remote both xclip and xsel are usually
--- installed but $DISPLAY is empty, so Neovim's auto-detected provider copies
--- into a dead X server and the yank silently vanishes. Force the terminal's
--- OSC 52 escape instead: tmux (set-clipboard on) and mosh relay it all the way
--- back to the local terminal's clipboard. Guarded on $SSH_TTY + no display so
--- the laptop keeps its native provider.
-local function empty(v) return v == nil or v == '' end
-if vim.env.SSH_TTY and empty(vim.env.DISPLAY) and empty(vim.env.WAYLAND_DISPLAY) then
+-- Clipboard over SSH/mosh: send yanks to the laptop via OSC 52, even when the
+-- remote has a $DISPLAY (xclip would fill the remote desktop's clipboard).
+-- Both registers copy as `c`: mosh drops the `p` selection. Paste returns the
+-- last yank, because mosh never answers an OSC 52 read and `p` would block ~10s;
+-- paste laptop text with Cmd+V.
+if vim.env.SSH_TTY then
   local osc52 = require('vim.ui.clipboard.osc52')
+  local copy_to_laptop = osc52.copy('+')
+  local last_yank = { {}, 'v' }
+  local function copy(lines, regtype)
+    last_yank = { lines, regtype }
+    copy_to_laptop(lines)
+  end
+  local function paste() return last_yank end
   vim.g.clipboard = {
     name = 'OSC 52',
-    copy = { ['+'] = osc52.copy('+'), ['*'] = osc52.copy('*') },
-    paste = { ['+'] = osc52.paste('+'), ['*'] = osc52.paste('*') },
+    copy = { ['+'] = copy, ['*'] = copy },
+    paste = { ['+'] = paste, ['*'] = paste },
   }
 end
 

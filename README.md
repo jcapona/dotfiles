@@ -142,6 +142,10 @@ Configured via Mason: **pyright** (Python)
 
 Pane navigation via **tmux-pain-control** (`prefix + h/j/k/l`).
 
+### Clipboard over SSH/mosh
+
+On a remote host, copies in tmux copy mode and nvim yanks travel back to the local clipboard as OSC 52, through tmux and mosh. The local terminal must allow it (iTerm2: *Settings → General → Selection → Applications in terminal may access clipboard*). To paste local text into the remote, use the terminal's paste (Cmd+V); nvim's `p` there pastes the last remote yank.
+
 ### Plugins
 
 tpm, tmux-sensible, tmux-yank, tmux-resurrect, tmux-continuum (auto-restore), tmux-pain-control, tmux-menus, treemux, tmux-agent-status
