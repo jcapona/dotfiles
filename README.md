@@ -44,7 +44,7 @@ Implies `--local`, so it always syncs from this checkout.
 - **NVM** — Node.js version manager (latest)
 - **Nerd Font** — DroidSansMono for terminal icons
 - **Shell aliases** — git shortcuts, systemd helpers, utility functions
-- **Custom scripts** — `mssh`, `sync-dir`, `sync-pi`, `new-pi`, `transfer-sh` (installed to `~/.local/bin`)
+- **Custom scripts** — `mssh`, `sync-dir`, `sync-pi`, `new-pi`, `transfer-sh`, `clip-img` (installed to `~/.local/bin`)
 
 ## Neovim
 
@@ -145,6 +145,8 @@ Pane navigation via **tmux-pain-control** (`prefix + h/j/k/l`).
 ### Clipboard over SSH/mosh
 
 On a remote host, copies in tmux copy mode and nvim yanks travel back to the local clipboard as OSC 52, through tmux and mosh. The local terminal must allow it (iTerm2: *Settings → General → Selection → Applications in terminal may access clipboard*). To paste local text into the remote, use the terminal's paste (Cmd+V); nvim's `p` there pastes the last remote yank.
+
+Images can't cross the terminal. On macOS, `clip-img <host>` uploads the clipboard image to `/tmp` on the host and puts its path on the clipboard; paste the path into a remote Claude Code.
 
 ### Plugins
 

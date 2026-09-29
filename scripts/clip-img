@@ -1,0 +1,25 @@
+#!/bin/bash
+# Send the image on the macOS clipboard to a remote host and replace the
+# clipboard with its remote path, ready to paste into a remote Claude Code.
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $ clip-img <HOST>"
+    exit 1
+fi
+
+host="${1}"
+local_file="$(mktemp -t clip-img).png"
+remote_file="/tmp/clip-$(date +%Y%m%d-%H%M%S).png"
+trap 'rm -f "${local_file}"' EXIT
+
+if ! osascript -e "set f to open for access POSIX file \"${local_file}\" with write permission" \
+               -e 'write (the clipboard as «class PNGf») to f' \
+               -e 'close access f' >/dev/null 2>&1; then
+    echo "No image on the clipboard."
+    exit 1
+fi
+
+scp -q "${local_file}" "${host}:${remote_file}"
+printf '%s' "${remote_file}" | pbcopy
+echo "${host}:${remote_file} (path copied to clipboard)"
