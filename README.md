@@ -139,6 +139,10 @@ Configured via Mason: **pyright** (Python)
 | `prefix + N` | Jump to next finished agent |
 | `prefix + W` | Put session in wait mode |
 | `prefix + P` | Park session for later |
+| `prefix + u` | Undo: reopen the last closed pane / window / session |
+| `prefix + U` | Picker over recently closed panes / windows / sessions |
+| `prefix + R` | Picker over saved snapshots |
+| `prefix + C-s` | Save a snapshot now |
 
 Pane navigation via **tmux-pain-control** (`prefix + h/j/k/l`).
 
@@ -150,7 +154,9 @@ Images can't cross the terminal. On macOS, `clip-img <host>` uploads the clipboa
 
 ### Plugins
 
-tpm, tmux-sensible, tmux-yank, tmux-resurrect, tmux-continuum (auto-restore), tmux-pain-control, tmux-menus, treemux, tmux-agent-status
+tpm, tmux-sensible, tmux-yank, tmux-remux (save/restore + undo), tmux-pain-control, tmux-menus, treemux, tmux-agent-status
+
+tmux-remux snapshots on structural changes (new/closed session, window or split, detach) and auto-restores once when the tmux server starts. With tmux older than 3.8 there's no once-a-minute save, so a pane's scrollback and directory are only as fresh as the last structural change.
 
 ## Shell aliases
 
