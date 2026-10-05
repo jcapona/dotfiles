@@ -156,7 +156,7 @@ Images can't cross the terminal. On macOS, `clip-img <host>` uploads the clipboa
 
 tpm, tmux-sensible, tmux-yank, tmux-remux (save/restore + undo), tmux-pain-control, tmux-menus, treemux, tmux-agent-status
 
-tmux-remux snapshots on structural changes (new/closed session, window or split, detach) and auto-restores once when the tmux server starts. With tmux older than 3.8 there's no once-a-minute save, so a pane's scrollback and directory are only as fresh as the last structural change.
+tmux-remux snapshots on structural changes (new/closed session, window or split, detach) and auto-restores once when the tmux server starts. With tmux older than 3.8 there's no once-a-minute save, so a pane's scrollback is only as fresh as the last structural change. Its directory is saved by a zsh `cd` hook in `shell_aliases` within 31s, so a pane closed sooner than that after a `cd` reopens in the previous directory.
 
 ## Shell aliases
 
