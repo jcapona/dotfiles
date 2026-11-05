@@ -133,12 +133,8 @@ Configured via Mason: **pyright** (Python)
 | `y` | Copy selection to clipboard (copy mode) |
 | `prefix + F12` | Open tmux-menus popup |
 | `F12` (no prefix) | Toggle the prefix off/on — lets keys fall through to a nested/remote tmux. Only bound on the local machine (skipped when `$SSH_TTY` is set) |
-| `prefix + p` / `prefix + o` | Previous window / next pane (tmux builtins, explicitly reclaimed from tmux-agent-status) |
-| `prefix + S` | Agent switcher popup |
-| `prefix + O` | Toggle agent sidebar |
-| `prefix + N` | Jump to next finished agent |
-| `prefix + W` | Put session in wait mode |
-| `prefix + P` | Park session for later |
+| `prefix + p` / `prefix + o` | Previous window / next pane |
+| `prefix + T` | Toggle the tmux-canopy sidebar (session/window/pane tree with agent state). Inside it: `n` jumps to the agent waiting longest for input, `?` lists every key |
 | `prefix + u` | Undo: reopen the last closed pane / window / session |
 | `prefix + U` | Picker over recently closed panes / windows / sessions |
 | `prefix + R` | Picker over saved snapshots |
@@ -154,7 +150,7 @@ Images can't cross the terminal. On macOS, `clip-img <host>` uploads the clipboa
 
 ### Plugins
 
-tpm, tmux-sensible, tmux-yank, tmux-remux (save/restore + undo), tmux-pain-control, tmux-menus, treemux, tmux-agent-status
+tpm, tmux-sensible, tmux-yank, tmux-remux (save/restore + undo), tmux-pain-control, tmux-menus, treemux, tmux-canopy (sidebar + agent monitor; needs bash 4.4+ and fzf)
 
 tmux-remux snapshots on structural changes (new/closed session, window or split, detach) and auto-restores once when the tmux server starts. tmux older than 3.8 has no periodic save of its own, so the status bar runs one every `status-interval` (5s) while a client is attached. remux ignores a resize or directory change made within 30s of its last save, so a pane closed sooner than that after one reopens with the earlier state.
 

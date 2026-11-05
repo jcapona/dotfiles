@@ -289,7 +289,8 @@ copy_custom_scripts_and_aliases() {
 
 install_and_configure_tmux() {
   echo "===== tmux: Installing tmux and configuration"
-  install_packages tmux
+  # bash: tmux-canopy needs 4.4+ (macOS ships 3.2, Alpine ships none)
+  install_packages tmux bash
   # Install TPM plugin manager
   if [ ! -d ~/.tmux/plugins/tpm ]; then
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
