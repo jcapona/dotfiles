@@ -140,7 +140,7 @@ Configured via Mason: **pyright** (Python)
 | `prefix + R` | Picker over saved snapshots |
 | `prefix + C-s` | Save a snapshot now |
 
-Pane navigation via **tmux-pain-control** (`prefix + h/j/k/l`).
+Pane navigation via **tmux-pain-control** (`prefix + h/j/k/l`) or `prefix + arrows`, one move per prefix: the next arrow goes to the pane you landed in.
 
 ### Clipboard over SSH/mosh
 
